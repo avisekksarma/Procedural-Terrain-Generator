@@ -1,10 +1,11 @@
 #pragma once
-#include <math.h>
-
+#include <ostream>
 namespace glMath {
 
 #define PIE 3.141592653589793238
 
+	// Vector classes
+	//----------------------------------------------------------
 	template<typename T> 
 	class vec3 
 	{ 
@@ -69,30 +70,6 @@ namespace glMath {
 		T x, y, z; 
 	}; 
 
-	template <typename T>
-	vec3<T> normalize(vec3<T> v) 
-	{ 
-		vec3<T> temp = v;
-		T n = v.norm(); 
-		if (n > 0) { 
-			T factor = 1 / sqrt(n); 
-			temp.x *= factor, temp.y *= factor, temp.z *= factor; 
-		} 
-		return temp; 
-	} 
-
-	template <typename T>
-	vec3<T> cross(vec3<T> v1, vec3<T> v) 
-	{ return vec3<T>(v1.y * v.z -v1.z * v.y,v1.z * v.x -v1.x * v.z,v1.x * v.y -v1.y * v.x); } 
-
-
-	template <typename T>
-	T dot(const vec3<T> &v, const vec3<T>&s) 
-	{ return s.x * v.x +s.y * v.y + s.z * v.z; } 
-	
-
-
-
 	template<typename T> 
 	class vec2 
 	{ 
@@ -155,27 +132,8 @@ namespace glMath {
 		T x, y; 
 	}; 
 
-	template <typename T>
-	vec2<T> normalize(vec2<T> v) 
-	{ 
-		vec3<T> temp = v;
-		T n = v.norm(); 
-		if (n > 0) { 
-			T factor = 1 / sqrt(n); 
-			temp.x *= factor, temp.y *= factor; 
-		} 
-		return temp; 
-	} 
-
-	template <typename T>
-	vec2<T> cross(vec2<T> v1, vec2<T> v) 
-	{ return vec2<T>(v1.x * v.y - v1.y * v.x); } 
-
-
-	template <typename T>
-	T dot(const vec2<T> &v, const vec2<T>&s) 
-	{ return s.x * v.x +s.y * v.y ; } 
-
+	// Matrix classes 
+	// ----------------------------------------------------------------------------------
 	template <typename T>
 	class mat4 
 	{
@@ -367,231 +325,57 @@ namespace glMath {
 		}
 	};
 
+	// non member functions
 	template <typename T>
-	mat4<T> transpose(mat4<T>& x)
-	{
-		mat4<T> tmp(x[0][0],
-			x[1][0],
-			x[2][0],
-			x[3][0],
-			x[0][1],
-			x[1][1],
-			x[2][1],
-			x[3][1],
-			x[0][2],
-			x[1][2],
-			x[2][2],
-			x[3][2],
-			x[0][3],
-			x[1][3],
-			x[2][3],
-			x[3][3]);
-		return x;
-	}
+	vec3<T> normalize(vec3<T> v) ;
 
 	template <typename T>
-	mat4<T> translate(mat4<T>& m, vec3<T> v)
-	{
-		mat4<T> transMat(1.0f);
-		//transMat[3][0] = v[0];
-		//transMat[3][1] = v[1];
-		//transMat[3][2] = v[2];
-		
-		transMat[0][3] = v[0];
-		transMat[1][3] = v[1];
-		transMat[2][3] = v[2];
-
-		// transMat.transpose();
-		return ( m * transMat   );
-	}
+	vec3<T> cross(vec3<T> v1, vec3<T> v) ;
 
 	template <typename T>
-	mat4<T> rotate(mat4<T>& m, T angle, vec3<T> v)
-	{
-		T const a = angle;
-		T const c = cos(a);
-		T const s = sin(a);
-
-		vec3<T> axis = normalize(v);
-		T X = axis.x;
-		T Y = axis.y;
-		T Z = axis.z;
-
-		T t = (T(1) - c);
-
-		mat4<T> Rotate(1.0f);
-		Rotate[0][0] = (t * X * X + c);
-		Rotate[0][1] = (t * X*Y - s*Z);
-		Rotate[0][2] = ( t * X * Z + s * Y);
-
-		Rotate[1][0] = ( t * X * Y + s*Z);
-		Rotate[1][1] = ( t * Y * Y + c);
-		Rotate[1][2] = (t * Y * Z - s * X);
-
-		Rotate[2][0] = (t * X * Z - s * Y);
-		Rotate[2][1] = (t * Y * Z + s * X);
-		Rotate[2][2] = ( t * Z * Z + c);
-
-		Rotate = glMath::transpose(Rotate);
-
-		return (m * Rotate);
-	}
+	T dot(const vec3<T> &v, const vec3<T>&s);
 
 	template <typename T>
-	mat4<T> scale(mat4<T>& m, vec3<T> v)
-	{
-		mat4<T> scaleMat(1.0f);
-		scaleMat[0][0] = v.x;
-		scaleMat[1][1] = v.y;
-		scaleMat[2][2] = v.z;
+	vec2<T> normalize(vec2<T> v) ;
 
+	template <typename T>
+	vec2<T> cross(vec2<T> v1, vec2<T> v) ;
 
-		return (m * scaleMat);
-	}
+	template <typename T>
+	T dot(const vec2<T> &v, const vec2<T>&s);
+
+	template <typename T>
+	mat4<T> transpose(mat4<T>& x);
+
+	template <typename T>
+	mat4<T> translate(mat4<T>& m, vec3<T> v);
+
+	template <typename T>
+	mat4<T> rotate(mat4<T>& m, T angle, vec3<T> v);
+
+	template <typename T>
+	mat4<T> scale(mat4<T>& m, vec3<T> v);
 
 	template <typename T>
 	mat4<T> ortho(const T b, const T t, const T l, const T r,
-		const T n, const T f)
-	{
-		mat4<T> orthoMat;
-		orthoMat[0][0] = 2 / (r - l); 
-		orthoMat[0][1] = 0; 
-		orthoMat[0][2] = 0; 
-		orthoMat[0][3] = 0; 
-		 
-		orthoMat[1][0] = 0; 
-		orthoMat[1][1] = 2 / (t - b); 
-		orthoMat[1][2] = 0; 
-		orthoMat[1][3] = 0; 
-	 
-		orthoMat[2][0] = 0; 
-		orthoMat[2][1] = 0; 
-		orthoMat[2][2] = -2 / (f - n); 
-		orthoMat[2][3] = 0; 
-		 
-		orthoMat[3][0] = -(r + l) / (r - l); 
-		orthoMat[3][1] = -(t + b) / (t - b); 
-		orthoMat[3][2] = -(f + n) / (f - n); 
-		orthoMat[3][3] = 1; 
-
-		orthoMat.transpose();
-
-		return orthoMat;
-	}
+		const T n, const T f);
 
 	template <typename T>
-	mat4<T> perspective(T fovY, T aspectRatio,T front, T back)
-	{
-		T tangent = tan(fovY/2);				  // tangent of half fovY
-		T height = front * tangent;				 // half height of near plane
-		T width = height * aspectRatio;			// half width of near plane
-
-		T  r = width,  t = height, n = front, f = back;
-
-		mat4<T> perspecMat(0.0f);
-
-		// perspecMat[0][0] = n / r;
-		// perspecMat[1][1] = n / t;
-		// perspecMat[2][2] = -(f + n) / (f - n);
-		// perspecMat[2][3] = -(2 * f * n) / (f - n);
-		// perspecMat[3][2] = -1;
-
-		// perspecMat[0][0] = n / r;
-		// perspecMat[1][1] = n / t;
-		// perspecMat[2][2] = f / (f - n);
-		// perspecMat[2][3] = 1;
-		// perspecMat[3][2] = -(n * f)/(f - n);
-		// perspecMat[3][3] = 0;
-
-		// transpose
-
-		perspecMat[0][0] = n / r;
-		perspecMat[1][1] = n / t;
-		perspecMat[2][2] = f / (f - n);
-		perspecMat[3][2] = 1;
-		perspecMat[2][3] = -(n * f)/(f - n);
-		perspecMat[3][3] = 0;
-
-
-		// perspecMat.transpose();
-		
-
-		return perspecMat;
-	}
+	mat4<T> perspective(T fovY, T aspectRatio,T front, T back);
 
 	template <typename T>
-	mat4<T> lookAt(vec3<T> from, vec3<T> to, vec3<T> temp)
-	{
-		vec3<T> forward = glMath::normalize(to - from);
-		vec3<T> right = glMath::cross(forward, glMath::normalize(temp));
-		vec3<T> up = glMath::cross(right, forward);
-
-		mat4<T> Result(1.0f);
-
-		Result[0][0] = right.x;
-		Result[0][1] = right.y;
-		Result[0][2] = right.z;
-		Result[1][0] = up.x;
-		Result[1][1] = up.y;
-		Result[1][2] = up.z;
-		Result[2][0] = -forward.x;
-		Result[2][1] = -forward.y;
-		Result[2][2] = -forward.z;
-		Result[0][3] = -glMath::dot(right, from);
-		Result[1][3] = -glMath::dot(up, from);
-		Result[2][3] = glMath::dot(forward, from);
-
-		Result.transpose();
-
-		return Result;
-	}
+	mat4<T> lookAt(vec3<T> from, vec3<T> to, vec3<T> temp);
 
 	template <typename T>
-	T* value_ptr(mat4<T>& m)
-	{
-		return &m[0][0];
-	}
+	T* value_ptr(mat4<T>& m);
 
-	float radians(float angle)
-	{
-		return ((PIE / 180) * angle);
-	}
+	template<typename T>
+	void drawTriangle(glMath::vec3<T>p1,glMath::vec3<T>p2, glMath::vec3<T>p3, int color=1);
 
-	void BLA(int x0, int y0, int xl, int yl, int color) {
-		int delx = fabs(xl - x0);
-		int dely = fabs(yl - y0);
-		int a = 0, b = 0;
-		int p = 0;
-		a = ((xl - x0) > 0) ? 1 : -1;
-		b = ((yl - y0) > 0) ? 1 : -1;
-		if (delx > dely) {
-			p = 2 * dely - delx;
-			for (int i = 0; i <= delx; i++) {
-				// putpixel(x0 , y0 , color);
-				x0 += a;
-				if (p <= 0)
-					p += 2 * dely;
-				else {
-					p += 2 * dely - 2 * delx;
-					y0 += b;
-				}
-			}
-		}
-		else {
-			p = 2 * delx - dely;
-			for (int i = 0; i <= dely; i++) {
-				// putpixel(x0 , y0 , color);
-				y0 += b;
-				if (p <= 0)
-					p += 2 * delx;
-				else {
-					p += 2 * delx - 2 * dely;
-					x0 += a;
-				}
-			}
-		}
-	}
-	 
+	float radians(float angle);
+	void putpixel(float x, float y, int color);
+	void BLA(int x0, int y0, int xl, int yl, int color);
+
 	typedef vec3<float> vec3f; 
 	typedef vec3<int> vec3i;
 	typedef vec2<float> vec2f;
@@ -599,3 +383,4 @@ namespace glMath {
 
 	typedef mat4<float> mat4f;
 }
+
