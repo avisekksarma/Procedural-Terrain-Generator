@@ -1,39 +1,34 @@
 #include "../include/cube.h"
 #include "../include/glMath.h"
 
-Cube::Cube(sf::RenderWindow &w) : window(&w), model(glMath::mat4f(1.0f)),view(1.0f),proj(1.0f)
-{
+Cube::Cube(sf::RenderWindow& w): window(&w),model(glMath::mat4f(1.0f)) {
 
-	meshCube.tris = {
+	ndc.tris = {
 		// SOUTH
-		{glMath::vec3f(0.0f, 0.0f, 0.0f), glMath::vec3f(0.0f, 1.0f, 0.0f), glMath::vec3f(1.0f, 1.0f, 0.0f)},
-		{glMath::vec3f(0.0f, 0.0f, 0.0f), glMath::vec3f(1.0f, 1.0f, 0.0f), glMath::vec3f(1.0f, 0.0f, 0.0f)},
+		{ glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f) },
+		{ glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, -0.5f, 0.5f) },
 
-		// EAST
-		{glMath::vec3f(1.0f, 0.0f, 0.0f), glMath::vec3f(1.0f, 1.0f, 0.0f), glMath::vec3f(1.0f, 1.0f, 1.0f)},
-		{glMath::vec3f(1.0f, 0.0f, 0.0f), glMath::vec3f(1.0f, 1.0f, 1.0f), glMath::vec3f(1.0f, 0.0f, 1.0f)},
+		// EAST                                                      
+		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f) },
+		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f),    glMath::vec3f(-0.5f, -0.5f, -0.5f) },
 
-		// NORTH
-		{glMath::vec3f(1.0f, 0.0f, 1.0f), glMath::vec3f(1.0f, 1.0f, 1.0f), glMath::vec3f(0.0f, 1.0f, 1.0f)},
-		{glMath::vec3f(1.0f, 0.0f, 1.0f), glMath::vec3f(0.0f, 1.0f, 1.0f), glMath::vec3f(0.0f, 0.0f, 1.0f)},
+		// NORTH                                                     
+		{ glMath::vec3f(-0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f),    glMath::vec3f(-0.5f, -0.5f, -0.5f) },
+		{ glMath::vec3f(-0.5f, -0.5f, -0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f) },
 
-		// WEST
-		{glMath::vec3f(0.0f, 0.0f, 1.0f), glMath::vec3f(0.0f, 1.0f, 1.0f), glMath::vec3f(0.0f, 1.0f, 0.0f)},
-		{glMath::vec3f(0.0f, 0.0f, 1.0f), glMath::vec3f(0.0f, 1.0f, 0.0f), glMath::vec3f(0.0f, 0.0f, 0.0f)},
+		// WEST                                                      
+		{ glMath::vec3f(0.5f, -0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f) },
+		{ glMath::vec3f(0.5f, -0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f) },
 
-		// TOP
-		{glMath::vec3f(0.0f, 1.0f, 0.0f), glMath::vec3f(0.0f, 1.0f, 1.0f), glMath::vec3f(1.0f, 1.0f, 1.0f)},
-		{glMath::vec3f(0.0f, 1.0f, 0.0f), glMath::vec3f(1.0f, 1.0f, 1.0f), glMath::vec3f(1.0f, 1.0f, 0.0f)},
+		// TOP                                                       
+		{ glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f) },
+		{ glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f) },
 
-		// BOTTOM
-		{glMath::vec3f(1.0f, 0.0f, 1.0f), glMath::vec3f(0.0f, 0.0f, 1.0f), glMath::vec3f(0.0f, 0.0f, 0.0f)},
-		{glMath::vec3f(1.0f, 0.0f, 1.0f), glMath::vec3f(0.0f, 0.0f, 0.0f), glMath::vec3f(1.0f, 0.0f, 0.0f)},
+		// BOTTOM                                                    
+		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, -0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f) },
+		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, 0.5f) },
 
 	};
-
-	// meshCube.tris = {
-	// 	{ glMath::vec3f(0.0f, 0.0f, 0.0f),    glMath::vec3f(0.0f, 100.0f, 0.0f),    glMath::vec3f(100.0f, 100.0f, 0.0f) }
-	// };
 }
 
 void Cube::drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, int color = 1)
@@ -115,15 +110,32 @@ void Cube::perspective(float fov,float sw,float sh,float nearZ,float farZ){
 
 void Cube::updateVertices()
 {
-	for (auto &i : meshCube.tris)
-	{
+	meshCube.tris.clear();
+	for (auto i : ndc.tris) {
+		glMath::trianglef t;
+		int count = 0;
+		for (auto j : i.p)
+		{
+			glMath::vec3f v (j.x, j.y, j.z);
+			// glMath::vec3f v ((j.x + 1)*540, (j.y-1)*(-360), j.z);
+			v =  model * v;
+			t.p[count++] = glMath::vec3f(v.x, v.y, v.z);
+		}
+		meshCube.tris.push_back(t);
+	}
+	toWindowCoord();
+}
+
+void Cube::toWindowCoord()
+{
+	for (auto &i : meshCube.tris) {
 		for (auto &j : i.p)
 		{
 			glMath::vec3f v(j.x, j.y, j.z);
-			v = proj * view * model * v;
-			j = glMath::vec3f(v.x, v.y, v.z);
+			j = glMath::vec3f((v.x + 1)*540, (v.y-1)*(-360), v.z);
 		}
 	}
+	
 }
 void Cube::scale(glMath::vec3f p)
 {

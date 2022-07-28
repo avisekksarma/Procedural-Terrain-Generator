@@ -19,6 +19,9 @@ public:
 	Cube(sf::RenderWindow &w);
 	sf::RenderWindow *window;
 	mesh meshCube;
+	mesh ndc;
+	// std::vector<sf::Vertex> vertices;
+	glMath::mat4f toWindow;
 	// std::vector<sf::Vertex> vertices;
 	glMath::mat4f model;
 	glMath::mat4f view;
@@ -34,6 +37,7 @@ public:
 	void perspective(float fov, float sw, float sh, float nearZ, float farZ);
 	void scale();
 	void updateVertices();
+	void toWindowCoord();
 
 private:
 	void putpixel(float x, float y, int color);
