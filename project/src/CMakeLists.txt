@@ -1,5 +1,6 @@
 find_package (SFML REQUIRED system window graphics)
 set(source_dir "${PROJECT_SOURCE_DIR}/project/src/")
+# set (CMAKE_CXX_STANDARD 11)
 set(include_dir "${myproject_SOURCE_DIR}/project/include")
 # include_directories(${myproject_SOURCE_DIR}/project/include)
 include_directories(${include_dir})

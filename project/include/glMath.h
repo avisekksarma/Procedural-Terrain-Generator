@@ -2,93 +2,121 @@
 #include <math.h>
 #define PIE 3.141592653589793238
 
-namespace glMath {
+namespace glMath
+{
 
-    template<typename T> 
-    class vec3 
-    { 
-    public: 
-        vec3() : x(0), y(0), z(0) {} 
-        vec3(T xx) : x(xx), y(xx), z(xx) {} 
-        vec3(T xx, T yy, T zz) : x(xx), y(yy), z(zz) {} 
+    template <typename T>
+    class vec3
+    {
+    public:
+        vec3() : x(0), y(0), z(0) {}
+        vec3(T xx) : x(xx), y(xx), z(xx) {}
+        vec3(T xx, T yy, T zz) : x(xx), y(yy), z(zz) {}
 
         // operator overloading
         // --------------------
-        vec3 operator + (const vec3 &v) const 
-        { return vec3(x + v.x, y + v.y, z + v.z); } 
-        vec3& operator +=(const vec3 &v) 
+        vec3 operator+(const vec3 &v) const
+        {
+            return vec3(x + v.x, y + v.y, z + v.z);
+        }
+        vec3 &operator+=(const vec3 &v)
         {
             x += v.x;
             y += v.y;
             z += v.z;
-            return *this; 
-        } 
-        vec3& operator -=(const vec3 &v) 
+            return *this;
+        }
+        vec3 &operator-=(const vec3 &v)
         {
             x -= v.x;
             y -= v.y;
             z -= v.z;
-            return *this; 
-        } 
-        vec3 operator - (const vec3 v) const 
-        { return vec3(x - v.x, y - v.y, z - v.z); } 
-        vec3 operator * (const T r) const 
-        { return vec3(x * r, y * r, z * r); } 
-        const T& operator [] (uint8_t i) const { return (&x)[i]; } 
-        T& operator [] (uint8_t i) { return (&x)[i]; } 
-        friend std::ostream& operator << (std::ostream &s, const vec3<T> &v) 
-        { 
-            return s << '(' << v.x << ' ' << v.y << ' ' << v.z << ')'; 
-        } 
+            return *this;
+        }
+        vec3 operator-(const vec3 v) const
+        {
+            return vec3(x - v.x, y - v.y, z - v.z);
+        }
+        vec3 operator*(const T r) const
+        {
+            return vec3(x * r, y * r, z * r);
+        }
+        const T &operator[](uint8_t i) const { return (&x)[i]; }
+        T &operator[](uint8_t i) { return (&x)[i]; }
+        friend std::ostream &operator<<(std::ostream &s, const vec3<T> &v)
+        {
+            return s << '(' << v.x << ' ' << v.y << ' ' << v.z << ')';
+        }
 
         // product
         // -------
-        T dotProduct(const vec3<T> &v) const 
-        { return x * v.x + y * v.y + z * v.z; } 
-        T crossProduct(vec3<T>& v) const
-        { return vec3<T>(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x); } 
+        T dotProduct(const vec3<T> &v) const
+        {
+            return x * v.x + y * v.y + z * v.z;
+        }
+        T crossProduct(vec3<T> &v) const
+        {
+            return vec3<T>(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
+        }
 
         // properties
         // ----------
-        T norm() const 
-        { return x * x + y * y + z * z; } 
-        T length() const 
-        { return sqrt(norm()); } 
-        vec3& normalize() 
-        { 
-            T n = norm(); 
-            if (n > 0) { 
-                T factor = 1 / sqrt(n); 
-                x *= factor, y *= factor, z *= factor; 
-            } 
-        
-            return *this; 
-        } 
-        T x, y, z; 
-    }; 
+        T norm() const
+        {
+            return x * x + y * y + z * z;
+        }
+        T length() const
+        {
+            return sqrt(norm());
+        }
+        vec3 &normalize()
+        {
+            T n = norm();
+            if (n > 0)
+            {
+                T factor = 1 / sqrt(n);
+                x *= factor, y *= factor, z *= factor;
+            }
+
+            return *this;
+        }
+        T x, y, z;
+    };
 
     template <typename T>
-    vec3<T> normalize(vec3<T> v) 
-    { 
+    vec3<T> normalize(vec3<T> v)
+    {
         vec3<T> temp = v;
-        T n = v.norm(); 
-        if (n > 0) { 
-            T factor = 1 / sqrt(n); 
-            temp.x *= factor, temp.y *= factor, temp.z *= factor; 
-        } 
-        return temp; 
-    } 
+        T n = v.norm();
+        if (n > 0)
+        {
+            T factor = 1 / sqrt(n);
+            temp.x *= factor, temp.y *= factor, temp.z *= factor;
+        }
+        return temp;
+    }
 
     template <typename T>
-    vec3<T> cross(vec3<T> v1, vec3<T> v) 
-    { return vec3<T>(v1.y * v.z -v1.z * v.y,v1.z * v.x -v1.x * v.z,v1.x * v.y -v1.y * v.x); } 
+    vec3<T> cross(vec3<T> v1, vec3<T> v)
+    {
+        return vec3<T>(v1.y * v.z - v1.z * v.y, v1.z * v.x - v1.x * v.z, v1.x * v.y - v1.y * v.x);
+    }
 
     template <typename T>
-    T dot(const vec3<T> &v, const vec3<T>&s) 
-    { return s.x * v.x +s.y * v.y + s.z * v.z; } 
+    T dot(const vec3<T> &v, const vec3<T> &s)
+    {
+        return s.x * v.x + s.y * v.y + s.z * v.z;
+    }
+
+    // angles functions
+    template <typename T>
+    T degToRadians(T degree)
+    {
+        return degree * PIE / 180.0f;
+    }
 
     template <typename T>
-    class mat4 
+    class mat4
     {
     public:
         T x[4][4];
@@ -135,7 +163,7 @@ namespace glMath {
             x[3][3] = val;
         }
         mat4(T a, T b, T c, T d, T e, T f, T g, T h,
-            T i, T j, T k, T l, T m, T n, T o, T p)
+             T i, T j, T k, T l, T m, T n, T o, T p)
         {
             x[0][0] = a;
             x[0][1] = b;
@@ -155,101 +183,103 @@ namespace glMath {
             x[3][3] = p;
         }
 
-        const T* operator [] (uint8_t i) const { return x[i]; }
-        T* operator [] (uint8_t i) { return x[i]; }
-        mat4<T> operator * (const mat4<T>& v) const
+        const T *operator[](uint8_t i) const { return x[i]; }
+        T *operator[](uint8_t i) { return x[i]; }
+        mat4<T> operator*(const mat4<T> &v) const
         {
             mat4<T> tmp(0.0f);
             multiply(*this, v, tmp);
-
             return tmp;
         }
 
-        glMath::vec3<T> operator * (const glMath::vec3<T>& v) const
+        glMath::vec3<T> operator*(const glMath::vec3<T> &v) const
         {
             glMath::vec3<T> temp;
-            temp.x = x[0][0] * v.x + x[0][1] * v.y + x[0][2] * v.z + x[0][3]*1;
-            temp.y = x[1][0] * v.x + x[1][1] * v.y + x[1][2] * v.z + x[1][3]*1;
-            temp.z = x[2][0] * v.x + x[2][1] * v.y + x[2][2] * v.z + x[2][3]*1;
+            temp.x = x[0][0] * v.x + x[0][1] * v.y + x[0][2] * v.z + x[0][3] * 1;
+            temp.y = x[1][0] * v.x + x[1][1] * v.y + x[1][2] * v.z + x[1][3] * 1;
+            temp.z = x[2][0] * v.x + x[2][1] * v.y + x[2][2] * v.z + x[2][3] * 1;
             return temp;
         }
 
-        static void multiply(const mat4<T> &a, const mat4<T>& b, mat4<T> &c) 
-        { 
-            for (uint8_t i = 0; i < 4; ++i) { 
-                for (uint8_t j = 0; j < 4; ++j) { 
-                    c[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j] + 
-                        a[i][2] * b[2][j] + a[i][3] * b[3][j]; 
-                } 
-            } 
-        } 
-        mat4<T>& transpose()
+        static void multiply(const mat4<T> &a, const mat4<T> &b, mat4<T> &c)
+        {
+            for (uint8_t i = 0; i < 4; ++i)
+            {
+                for (uint8_t j = 0; j < 4; ++j)
+                {
+                    c[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j] +
+                              a[i][2] * b[2][j] + a[i][3] * b[3][j];
+                }
+            }
+        }
+        mat4<T> &transpose()
         {
             mat4 tmp(x[0][0],
-                x[1][0],
-                x[2][0],
-                x[3][0],
-                x[0][1],
-                x[1][1],
-                x[2][1],
-                x[3][1],
-                x[0][2],
-                x[1][2],
-                x[2][2],
-                x[3][2],
-                x[0][3],
-                x[1][3],
-                x[2][3],
-                x[3][3]);
+                     x[1][0],
+                     x[2][0],
+                     x[3][0],
+                     x[0][1],
+                     x[1][1],
+                     x[2][1],
+                     x[3][1],
+                     x[0][2],
+                     x[1][2],
+                     x[2][2],
+                     x[3][2],
+                     x[0][3],
+                     x[1][3],
+                     x[2][3],
+                     x[3][3]);
             *this = tmp;
 
             return *this;
         }
 
-        friend std::ostream& operator << (std::ostream& s, const mat4<T>& m)
+        friend std::ostream &operator<<(std::ostream &s, const mat4<T> &m)
         {
-            return s << '\n' << m[0][0] << ' ' << m[0][1] << ' ' << m[0][2] << ' ' << m[0][3] << '\n'
-                << m[1][0] << ' ' << m[1][1] << ' ' << m[1][2] << ' ' << m[1][3] << '\n'
-                << m[2][0] << ' ' << m[2][1] << ' ' << m[2][2] << ' ' << m[2][3] << '\n'
-                << m[3][0] << ' ' << m[3][1] << ' ' << m[3][2] << ' ' << m[3][3] << '\n';
+            return s << '\n'
+                     << m[0][0] << ' ' << m[0][1] << ' ' << m[0][2] << ' ' << m[0][3] << '\n'
+                     << m[1][0] << ' ' << m[1][1] << ' ' << m[1][2] << ' ' << m[1][3] << '\n'
+                     << m[2][0] << ' ' << m[2][1] << ' ' << m[2][2] << ' ' << m[2][3] << '\n'
+                     << m[3][0] << ' ' << m[3][1] << ' ' << m[3][2] << ' ' << m[3][3] << '\n';
         }
     };
 
     template <typename T>
-    mat4<T> transpose(mat4<T>& x)
+    mat4<T> transpose(mat4<T> &x)
     {
         mat4<T> tmp(x[0][0],
-            x[1][0],
-            x[2][0],
-            x[3][0],
-            x[0][1],
-            x[1][1],
-            x[2][1],
-            x[3][1],
-            x[0][2],
-            x[1][2],
-            x[2][2],
-            x[3][2],
-            x[0][3],
-            x[1][3],
-            x[2][3],
-            x[3][3]);
+                    x[1][0],
+                    x[2][0],
+                    x[3][0],
+                    x[0][1],
+                    x[1][1],
+                    x[2][1],
+                    x[3][1],
+                    x[0][2],
+                    x[1][2],
+                    x[2][2],
+                    x[3][2],
+                    x[0][3],
+                    x[1][3],
+                    x[2][3],
+                    x[3][3]);
         return x;
     }
 
     template <typename T>
-    mat4<T> translate(mat4<T>& m, vec3<T> v)
+    mat4<T> translate(mat4<T> &m, vec3<T> v)
     {
         mat4<T> transMat(1.0f);
         transMat[0][3] = v[0];
         transMat[1][3] = v[1];
         transMat[2][3] = v[2];
 
-        return ( transMat*m );
+        return (transMat * m);
     }
 
     template <typename T>
-    mat4<T> rotate(mat4<T>& m, T angle, vec3<T> v)
+    mat4<T> rotate(mat4<T> &m, T angle, vec3<T> v)
     {
         T const a = angle;
         T const c = cos(a);
@@ -264,32 +294,142 @@ namespace glMath {
 
         mat4<T> Rotate(1.0f);
         Rotate[0][0] = (t * X * X + c);
-        Rotate[0][1] = (t * X*Y - s*Z);
-        Rotate[0][2] = ( t * X * Z + s * Y);
+        Rotate[0][1] = (t * X * Y - s * Z);
+        Rotate[0][2] = (t * X * Z + s * Y);
 
-        Rotate[1][0] = ( t * X * Y + s*Z);
-        Rotate[1][1] = ( t * Y * Y + c);
+        Rotate[1][0] = (t * X * Y + s * Z);
+        Rotate[1][1] = (t * Y * Y + c);
         Rotate[1][2] = (t * Y * Z - s * X);
 
         Rotate[2][0] = (t * X * Z - s * Y);
         Rotate[2][1] = (t * Y * Z + s * X);
-        Rotate[2][2] = ( t * Z * Z + c);
+        Rotate[2][2] = (t * Z * Z + c);
 
-        return (m * Rotate);
+        return (Rotate * m);
     }
 
     template <typename T>
-    mat4<T> scale(mat4<T>& m, vec3<T> v)
+    mat4<T> scale(mat4<T> &m, vec3<T> v)
     {
         mat4<T> scaleMat(1.0f);
         scaleMat[0][0] = v.x;
         scaleMat[1][1] = v.y;
         scaleMat[2][2] = v.z;
-        return (m * scaleMat);
+        return (scaleMat * m);
+    }
+    template <typename T>
+    mat4<T> perspective(mat4<T> &m, T fov, float screenWidth, float screenHeight, T nearZ, T farZ)
+    {
+        // T tangent = tan(fovY / 2);      // tangent of half fovY
+        // T height = front * tangent;     // half height of near plane
+        // T width = height * aspectRatio; // half width of near plane
+
+        // T r = width, t = height, n = front, f = back;
+
+        mat4<T> perspecMat(0.0f);
+        fov = fov * 3.14f / 180.0f;
+        T aspectRatio = screenWidth / screenHeight;
+        T tangent = tan(fov / 2.0f);
+        tangent = 1 / tangent;
+        T val = tangent / aspectRatio;
+        perspecMat[0][0] = val;
+        perspecMat[1][1] = tangent;
+        perspecMat[2][2] = -(nearZ - farZ) / (nearZ - farZ);
+        perspecMat[2][3] = (2 * nearZ * farZ) / (nearZ - farZ);
+        perspecMat[3][2] = 1;
+        return perspecMat * m;
     }
 
-    typedef vec3<float> vec3f; 
-	typedef vec3<int> vec3i;
-	typedef mat4<float> mat4f;
+    template <typename T>
+    mat4<T> lookAt(vec3<T> from, vec3<T> to, vec3<T> temp)
+    {
+        vec3<T> forward = glMath::normalize(to - from);
+        vec3<T> right = glMath::cross(forward, glMath::normalize(temp));
+        vec3<T> up = glMath::cross(right, forward);
+
+        mat4<T> Result(1.0f);
+
+        Result[0][0] = right.x;
+        Result[0][1] = right.y;
+        Result[0][2] = right.z;
+        Result[1][0] = up.x;
+        Result[1][1] = up.y;
+        Result[1][2] = up.z;
+        Result[2][0] = -forward.x;
+        Result[2][1] = -forward.y;
+        Result[2][2] = -forward.z;
+        Result[0][3] = -glMath::dot(right, from);
+        Result[1][3] = -glMath::dot(up, from);
+        Result[2][3] = glMath::dot(forward, from);
+
+        Result.transpose();
+
+        return Result;
+    }
+
+    template <typename T>
+    void mouseMovement(bool &fM, T &yaw, T &pitch, T &lastX, T &lastY, T xPosIn, T yPosIn)
+    {
+        // TODO:  hide the cursor and capture mouse/cursor.
+        // TODO: in processevent loop call these functions when needed.
+        // maybe initialize yaw,pitch values before using
+        // bool firstMouse = true;
+        // float yaw = -90.0f;
+        // float pitch = 0.0f;
+        // float lastX = 800.0f / 2.0;
+        // float lastY = 600.0 / 2.0;
+        // also cameraFront 
+
+        // for camera i can have like this initially
+        // camera
+        // glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+        // glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+        // glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+        float xpos = xposIn;
+        float ypos = yposIn;
+
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
+
+        float xoffset = xpos - lastX;
+        float yoffset = ypos - lastY;
+        lastX = xpos;
+        lastY = ypos;
+
+        float sensitivity = 0.1f;
+        xoffset *= sensitivity;
+        yoffset *= sensitivity;
+
+        yaw += xoffset;
+        pitch += yoffset;
+
+        if (pitch > 89.0f)
+            pitch = 89.0f;
+        if (pitch < -89.0f)
+            pitch = -89.0f;
+
+        glMath::vec3f front;
+        front.x = cos(glMath::degToRadians(yaw)) * cos(glMath::degToRadians(pitch));
+        front.y = sin(glMath::degToRadians(pitch));
+        front.z = sin(glMath::degToRadians(yaw)) * cos(glMath::degToRadians(pitch));
+        cameraFront = glMath::normalize(front);
+    }
+    template<typename T>
+    void scrollMovement(T xoffset, T yoffset, T &fov)
+    {
+        fov -= (float)yoffset;
+        if (fov < 1.0f)
+            fov = 1.0f;
+        if (fov > 45.0f)
+            fov = 45.0f;
+    }
+
+    typedef vec3<float> vec3f;
+    typedef vec3<int> vec3i;
+    typedef mat4<float> mat4f;
 
 }
