@@ -21,14 +21,16 @@ public:
     Cube(sf::RenderWindow& w);
 	sf::RenderWindow* window;
 	mesh meshCube;
+	mesh ndc;
 	std::vector<sf::Vertex> vertices;
 	glMath::mat4f model;
+	glMath::mat4f toWindow;
 	void putpixel(float x, float y, int color);
 	void BLA(int x0, int y0, int xl, int yl, int color);
 	void drawTriangle(glMath::vec3f p1,glMath::vec3f p2, glMath::vec3f p3, int color);
     void render();
-	void setVertex();
 	void translate(glMath::vec3f p);
 	void rotate(glMath::vec3f p, float angle);
 	void updateVertices();
+	void toWindowCoord();
 };

@@ -403,3 +403,82 @@
 // 	typedef mat4<float> mat4f;
 // }
 
+	// template <typename T>
+	// mat4<T> ortho(const T b, const T t, const T l, const T r,
+	// 	const T n, const T f)
+	// {
+	// 	mat4<T> orthoMat;
+	// 	orthoMat[0][0] = 2 / (r - l); 
+	// 	orthoMat[0][1] = 0; 
+	// 	orthoMat[0][2] = 0; 
+	// 	orthoMat[0][3] = 0; 
+		 
+	// 	orthoMat[1][0] = 0; 
+	// 	orthoMat[1][1] = 2 / (t - b); 
+	// 	orthoMat[1][2] = 0; 
+	// 	orthoMat[1][3] = 0; 
+	 
+	// 	orthoMat[2][0] = 0; 
+	// 	orthoMat[2][1] = 0; 
+	// 	orthoMat[2][2] = -2 / (f - n); 
+	// 	orthoMat[2][3] = 0; 
+		 
+	// 	orthoMat[3][0] = -(r + l) / (r - l); 
+	// 	orthoMat[3][1] = -(t + b) / (t - b); 
+	// 	orthoMat[3][2] = -(f + n) / (f - n); 
+	// 	orthoMat[3][3] = 1; 
+
+	// 	orthoMat.transpose();
+
+	// 	return orthoMat;
+	// }
+
+	// template <typename T>
+	// mat4<T> perspective(T fovY, T aspectRatio,T front, T back)
+	// {
+	// 	T tangent = tan(fovY/2);				  // tangent of half fovY
+	// 	T height = front * tangent;				 // half height of near plane
+	// 	T width = height * aspectRatio;			// half width of near plane
+
+	// 	T  r = width,  t = height, n = front, f = back;
+
+	// 	mat4<T> perspecMat(0.0f);
+
+	// 	perspecMat[0][0] = n / r;
+	// 	perspecMat[1][1] = n / t;
+	// 	perspecMat[2][2] = -(f + n) / (f - n);
+	// 	perspecMat[2][3] = -(2 * f * n) / (f - n);
+	// 	perspecMat[3][2] = -1;
+
+	// 	perspecMat.transpose();
+		
+
+	// 	return perspecMat;
+	// }
+
+	// template <typename T>
+	// mat4<T> lookAt(vec3<T> from, vec3<T> to, vec3<T> temp)
+	// {
+	// 	vec3<T> forward = glMath::normalize(to - from);
+	// 	vec3<T> right = glMath::cross(forward, glMath::normalize(temp));
+	// 	vec3<T> up = glMath::cross(right, forward);
+
+	// 	mat4<T> Result(1.0f);
+
+	// 	Result[0][0] = right.x;
+	// 	Result[0][1] = right.y;
+	// 	Result[0][2] = right.z;
+	// 	Result[1][0] = up.x;
+	// 	Result[1][1] = up.y;
+	// 	Result[1][2] = up.z;
+	// 	Result[2][0] = -forward.x;
+	// 	Result[2][1] = -forward.y;
+	// 	Result[2][2] = -forward.z;
+	// 	Result[0][3] = -glMath::dot(right, from);
+	// 	Result[1][3] = -glMath::dot(up, from);
+	// 	Result[2][3] = glMath::dot(forward, from);
+
+	// 	Result.transpose();
+
+	// 	return Result;
+	// }
