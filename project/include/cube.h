@@ -7,14 +7,9 @@
 #include <iostream>
 #include <math.h>
 
-struct triangle
-{
-	glMath::vec3f p[3];
-};
-
 struct mesh
 {
-	std::vector<triangle> tris;
+	std::vector<glMath::trianglef> tris;
 };
 
 class Cube

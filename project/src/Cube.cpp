@@ -98,7 +98,7 @@ void Cube::render()
 		drawTriangle(i.p[0], i.p[1], i.p[2]);
 	}
 }
-
+  
 void Cube::translate(glMath::vec3f p)
 {
 	model = glMath::translate<float>(model, p);
