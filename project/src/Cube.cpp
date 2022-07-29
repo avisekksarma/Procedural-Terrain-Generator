@@ -105,10 +105,12 @@ void Cube::rotate(glMath::vec3f p, float angle)
 }
 
 void Cube::perspective(float fov,float sw,float sh,float nearZ,float farZ){
-	proj = glMath::perspective<float>(view, fov,sw,sh,nearZ,farZ);
+	proj = glMath::perspective<float>(fov,sw,sh,nearZ,farZ);
 }
 
-
+void Cube::lookAt(glMath::vec3f  from, glMath::vec3f  to, glMath::vec3f  temp){
+	view = glMath::lookAt<float>(from,to,temp);
+}
 // fills the meshcube upto to be rendered part i.e. upto projection done
 void Cube::updateVertices()
 {
@@ -120,7 +122,7 @@ void Cube::updateVertices()
 		{
 			glMath::vec4f v (j.x, j.y, j.z,1);
 			// glMath::vec3f v ((j.x + 1)*540, (j.y-1)*(-360), j.z);
-			v =  proj * v;
+			v =  proj*view*model * v;
 			if(v.w!=1 and v.w!=0){
 				v.x /= v.w;
 				v.y /= v.w;

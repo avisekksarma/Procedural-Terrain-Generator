@@ -544,7 +544,7 @@ namespace glMath
         return (scaleMat * m);
     }
     template <typename T>
-    mat4<T> perspective(mat4<T> &m, T fov, float screenWidth, float screenHeight, T nearZ, T farZ)
+    mat4<T> perspective(T fov, float screenWidth, float screenHeight, T nearZ, T farZ)
     {
         // T tangent = tan(fovY / 2);      // tangent of half fovY
         // T height = front * tangent;     // half height of near plane
@@ -563,7 +563,7 @@ namespace glMath
         perspecMat[2][2] = -(nearZ - farZ) / (nearZ - farZ);
         perspecMat[2][3] = (2 * nearZ * farZ) / (nearZ - farZ);
         perspecMat[3][2] = -1;
-        return perspecMat * m;
+        return perspecMat;
     }
 
     template <typename T>
@@ -626,7 +626,7 @@ namespace glMath
     mat4<T> lookAt(vec3<T> from, vec3<T> to, vec3<T> temp)
     {
         vec3<T> forward = glMath::normalize(to - from);
-        vec3<T> right = glMath::cross(forward, glMath::normalize(temp));
+        vec3<T> right = glMath::normalize(glMath::cross(forward, glMath::normalize(temp)));
         vec3<T> up = glMath::cross(right, forward);
 
         mat4<T> Result(1.0f);
@@ -640,11 +640,14 @@ namespace glMath
         Result[2][0] = -forward.x;
         Result[2][1] = -forward.y;
         Result[2][2] = -forward.z;
-        Result[0][3] = -glMath::dot(right, from);
-        Result[1][3] = -glMath::dot(up, from);
-        Result[2][3] = glMath::dot(forward, from);
+        // Result[0][3] = -glMath::dot(right, from);
+        // Result[1][3] = -glMath::dot(up, from);
+        // Result[2][3] = glMath::dot(forward, from);
+        Result[0][3] = -from.x;
+        Result[1][3] = -from.y;
+        Result[2][3] = -from.z;
 
-        Result.transpose();
+        // Result.transpose();
 
         return Result;
     }

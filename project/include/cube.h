@@ -37,6 +37,7 @@ public:
 	void rotate(glMath::vec3f p, float angle);
 	void scale(glMath::vec3f p);
 	void perspective(float fov, float sw, float sh, float nearZ, float farZ);
+	void lookAt(glMath::vec3f from, glMath::vec3f to, glMath::vec3f temp);
 	// void scale();
 	void updateVertices();
 	void toWindowCoord();
