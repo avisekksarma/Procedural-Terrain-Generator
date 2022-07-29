@@ -5,20 +5,20 @@ Cube::Cube(sf::RenderWindow& w): window(&w),model(glMath::mat4f(1.0f)),view(1.0f
 
 	local.tris = {
 		// SOUTH
-		{ glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f) },
-		{ glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, -0.5f, 0.5f) },
+		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f) },
+		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, -0.5f, 0.5f) },
 
 		// EAST                                                      
-		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f) },
-		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f),    glMath::vec3f(-0.5f, -0.5f, -0.5f) },
-
-		// NORTH                                                     
-		{ glMath::vec3f(-0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f),    glMath::vec3f(-0.5f, -0.5f, -0.5f) },
-		{ glMath::vec3f(-0.5f, -0.5f, -0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f) },
-
-		// WEST                                                      
 		{ glMath::vec3f(0.5f, -0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f) },
 		{ glMath::vec3f(0.5f, -0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f) },
+
+		// NORTH                                                     
+		{ glMath::vec3f(-0.5f, -0.5f, -0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f) },
+		{ glMath::vec3f(-0.5f, -0.5f, -0.5f),    glMath::vec3f(-0.5f, -0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f) },
+
+		// WEST                                                      
+		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f) },
+		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f),    glMath::vec3f(-0.5f, -0.5f, -0.5f) },
 
 		// TOP                                                       
 		{ glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f) },
@@ -26,9 +26,11 @@ Cube::Cube(sf::RenderWindow& w): window(&w),model(glMath::mat4f(1.0f)),view(1.0f
 
 		// BOTTOM                                                    
 		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, -0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f) },
-		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, 0.5f) },
+		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, 0.5f) }
 
 	};
+
+	first = true;
 }
 
 void Cube::drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, int color = 1)
@@ -40,9 +42,25 @@ void Cube::drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, in
 	p2.y = (p2.y-1) * -360;
 	p3.x = (p3.x+1) * 540;
 	p3.y = (p3.y-1) * -360;
-	BLA(p1.x, p1.y, p2.x, p2.y, color);
-	BLA(p2.x, p2.y, p3.x, p3.y, color);
-	BLA(p3.x, p3.y, p1.x, p1.y, color);
+
+	// p1.x = (int)( ((p1.x+1) * 540) + 0.5 );
+	// p1.y = (int)( ((p1.y-1) * -360) + 0.5);
+	// p2.x = (int)( ((p2.x+1) * 540) + 0.5)
+	// p2.y = (int)( ((p2.y-1) * -360) + 0.5);
+	// p3.x = (int)( ((p3.x+1) * 540) + 0.5)
+	// p3.y = (int)( ((p3.y-1) * -360) + 0.5);
+
+	if (first)
+	{
+		BLA(p1.x, p1.y, p2.x, p2.y, color);
+		BLA(p2.x, p2.y, p3.x, p3.y, color);
+	}
+	else
+	{
+		BLA(p2.x, p2.y, p3.x, p3.y, color);
+		BLA(p3.x, p3.y, p1.x, p1.y, color);
+	}
+	first = (first)? false:true;
 }
 
 void Cube::BLA(int x0, int y0, int xl, int yl, int color)
@@ -97,9 +115,9 @@ void Cube::render()
 {
 	for (auto &i : meshCube.tris)
 	{
-		// drawTriangle(i.p[0], i.p[1], i.p[2]);
-		fillTriangle(sf::Vector2f(i.p[0].x, i.p[0].y),
-					sf::Vector2f(i.p[1].x, i.p[1].y),sf::Vector2f(i.p[2].x, i.p[2].y));
+		drawTriangle(i.p[0], i.p[1], i.p[2]);
+		// fillTriangle(sf::Vector2f(i.p[0].x, i.p[0].y),
+		// 			sf::Vector2f(i.p[1].x, i.p[1].y),sf::Vector2f(i.p[2].x, i.p[2].y));
 	}
 }
   
@@ -130,6 +148,7 @@ void Cube::perspective(float fov,float sw,float sh,float nearZ,float farZ){
 void Cube::lookAt(glMath::vec3f  from, glMath::vec3f  to, glMath::vec3f  temp){
 	view = glMath::lookAt<float>(from,to,temp);
 }
+
 // fills the meshcube upto to be rendered part i.e. upto projection done
 void Cube::updateVertices()
 {
@@ -140,8 +159,7 @@ void Cube::updateVertices()
 		for (auto j : i.p)
 		{
 			glMath::vec4f v (j.x, j.y, j.z,1);
-			// glMath::vec3f v ((j.x + 1)*540, (j.y-1)*(-360), j.z);
-			v =  proj*view*model * v;
+			v =  (proj*(view * model)) * v;
 			if(v.w!=1 and v.w!=0){
 				v.x /= v.w;
 				v.y /= v.w;
@@ -152,7 +170,6 @@ void Cube::updateVertices()
 		}
 		meshCube.tris.push_back(t);
 	}
-	// toWindowCoord();
 }
 
 void Cube::toWindowCoord()

@@ -27,6 +27,7 @@ public:
 	glMath::mat4f model;
 	glMath::mat4f view;
 	glMath::mat4f proj;
+	bool first;
 
 public:
 	void drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, int color);
