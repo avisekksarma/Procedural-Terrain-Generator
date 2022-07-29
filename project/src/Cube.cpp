@@ -1,9 +1,9 @@
 #include "../include/cube.h"
 #include "../include/glMath.h"
 
-Cube::Cube(sf::RenderWindow& w): window(&w),model(glMath::mat4f(1.0f)) {
+Cube::Cube(sf::RenderWindow& w): window(&w),model(glMath::mat4f(1.0f)),view(1.0f),proj(1.0f) {
 
-	ndc.tris = {
+	local.tris = {
 		// SOUTH
 		{ glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f) },
 		{ glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, -0.5f, 0.5f) },
@@ -101,24 +101,32 @@ void Cube::translate(glMath::vec3f p)
 
 void Cube::rotate(glMath::vec3f p, float angle)
 {
-	model = glMath::rotate<float>(model, (float)(PIE / 180) * (angle), p);
+	model = glMath::rotate<float>(model, glMath::degToRadians(angle) ,p);
 }
 
 void Cube::perspective(float fov,float sw,float sh,float nearZ,float farZ){
-	model = glMath::perspective<float>(model, fov,sw,sh,nearZ,farZ);
+	proj = glMath::perspective<float>(view, fov,sw,sh,nearZ,farZ);
 }
 
+
+// fills the meshcube upto to be rendered part i.e. upto projection done
 void Cube::updateVertices()
 {
 	meshCube.tris.clear();
-	for (auto i : ndc.tris) {
+	for (auto i : local.tris) {
 		glMath::trianglef t;
 		int count = 0;
 		for (auto j : i.p)
 		{
-			glMath::vec3f v (j.x, j.y, j.z);
+			glMath::vec4f v (j.x, j.y, j.z,1);
 			// glMath::vec3f v ((j.x + 1)*540, (j.y-1)*(-360), j.z);
-			v =  model * v;
+			v =  proj * v;
+			if(v.w!=1 and v.w!=0){
+				v.x /= v.w;
+				v.y /= v.w;
+				v.z /= v.w;
+				v.w = 1;
+			}
 			t.p[count++] = glMath::vec3f(v.x, v.y, v.z);
 		}
 		meshCube.tris.push_back(t);

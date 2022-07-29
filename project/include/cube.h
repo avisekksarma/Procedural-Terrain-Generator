@@ -18,8 +18,10 @@ class Cube
 public:
 	Cube(sf::RenderWindow &w);
 	sf::RenderWindow *window;
+	// copy
 	mesh meshCube;
-	mesh ndc;
+	// actual
+	mesh local;
 	// std::vector<sf::Vertex> vertices;
 	glMath::mat4f toWindow;
 	// std::vector<sf::Vertex> vertices;
@@ -35,7 +37,7 @@ public:
 	void rotate(glMath::vec3f p, float angle);
 	void scale(glMath::vec3f p);
 	void perspective(float fov, float sw, float sh, float nearZ, float farZ);
-	void scale();
+	// void scale();
 	void updateVertices();
 	void toWindowCoord();
 
