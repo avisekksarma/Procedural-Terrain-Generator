@@ -103,6 +103,7 @@ namespace glMath
     {
         glMath::vec3<T> p[3];
     };
+    
     typedef triangle<float> trianglef;
 
     template <typename T>
@@ -155,8 +156,8 @@ namespace glMath
         }
         vec4 operator*(const vec4 &v) const
         {
-            return vec4(x * v.x, y * v.y, z * v.z, w * v.w);
-        }
+            return vec4(x + v.x, y + v.y, z + v.z, w + v.w);
+        } 
 
         vec4 &operator+=(const vec4 &v)
         {
@@ -553,7 +554,7 @@ namespace glMath
         // T r = width, t = height, n = front, f = back;
 
         mat4<T> perspecMat(0.0f);
-        fov = fov * 3.14f / 180.0f;
+        fov = fov * (3.14f / 180.0f);
         T aspectRatio = screenWidth / screenHeight;
         T tangent = tan(fov / 2.0f);
         tangent = 1 / tangent;
@@ -563,6 +564,7 @@ namespace glMath
         perspecMat[2][2] = -(nearZ - farZ) / (nearZ - farZ);
         perspecMat[2][3] = (2 * nearZ * farZ) / (nearZ - farZ);
         perspecMat[3][2] = -1;
+
         return perspecMat;
     }
 
@@ -646,6 +648,8 @@ namespace glMath
         Result[0][3] = -from.x;
         Result[1][3] = -from.y;
         Result[2][3] = -from.z;
+
+        Result[3][3] = 1;
 
         // Result.transpose();
 
