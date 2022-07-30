@@ -547,12 +547,6 @@ namespace glMath
     template <typename T>
     mat4<T> perspective(T fov, float screenWidth, float screenHeight, T nearZ, T farZ)
     {
-        // T tangent = tan(fovY / 2);      // tangent of half fovY
-        // T height = front * tangent;     // half height of near plane
-        // T width = height * aspectRatio; // half width of near plane
-
-        // T r = width, t = height, n = front, f = back;
-
         mat4<T> perspecMat(0.0f);
         fov = fov * (3.14f / 180.0f);
         T aspectRatio = screenWidth / screenHeight;
@@ -642,17 +636,12 @@ namespace glMath
         Result[2][0] = -forward.x;
         Result[2][1] = -forward.y;
         Result[2][2] = -forward.z;
-        // Result[0][3] = -glMath::dot(right, from);
-        // Result[1][3] = -glMath::dot(up, from);
-        // Result[2][3] = glMath::dot(forward, from);
         Result[0][3] = -from.x;
         Result[1][3] = -from.y;
         Result[2][3] = -from.z;
 
         Result[3][3] = 1;
-
-        // Result.transpose();
-
+        
         return Result;
     }
 
