@@ -122,7 +122,7 @@ void Cube::render()
 		drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255,0,0));
 	}
 }
-  
+
 void Cube::translate(glMath::vec3f p)
 {
 	p.x = (float)(2*p.x)/constants::SCREEN_WIDTH;
@@ -137,7 +137,7 @@ void Cube::translate(glMath::vec3f p)
 
 void Cube::rotate(glMath::vec3f p, float angle)
 {
-	model = glMath::rotate<float>(model, glMath::degToRadians(angle) ,p);
+	model = glMath::rotate<float>(model, glMath::degToRadians(angle), p);
 }
 
 void Cube::scale(glMath::vec3f p)
@@ -149,28 +149,66 @@ void Cube::perspective(float fov,float sw,float sh,float nearZ,float farZ){
 	proj = glMath::perspective<float>(fov,sw,sh,nearZ,farZ);
 }
 
-void Cube::lookAt(glMath::vec3f  from, glMath::vec3f  to, glMath::vec3f  temp){
-	view = glMath::lookAt<float>(from,to,temp);
+void Cube::lookAt(glMath::vec3f from, glMath::vec3f to, glMath::vec3f temp)
+{
+	view = glMath::lookAt<float>(from, to, temp);
 }
 
 // fills the meshcube upto to be rendered part i.e. upto projection done
 void Cube::updateVertices()
 {
 	meshCube.tris.clear();
-	for (auto i : local.tris) {
+	for (auto i : local.tris)
+	{
 		glMath::trianglef t;
+		glMath::triangle4f triafterView;
 		int count = 0;
+		int k = 0;
 		for (auto j : i.p)
 		{
-			glMath::vec4f v (j.x, j.y, j.z,1);
-			v =  (proj*(view * model)) * v;
-			if(v.w!=1 and v.w!=0){
-				v.x /= v.w;
-				v.y /= v.w;
-				v.z /= v.w;
-				v.w = 1;
+			glMath::vec4f v(j.x, j.y, j.z, 1);
+			// glMath::vec3f v ((j.x + 1)*540, (j.y-1)*(-360), j.z);
+			// v =  proj*view*model * v;
+			v = view * model * v;
+			triafterView.p[k] = glMath::vec4f(v.x, v.y, v.z, v.w);
+			// v = proj * v;
+			// // perspective division
+			// if (v.w != 1 and v.w != 0)
+			// {
+			// 	v.x /= v.w;
+			// 	v.y /= v.w;
+			// 	v.z /= v.w;
+			// 	v.w = 1;
+			// 	cout << v.x << " " << v.y << " " << v.z << endl;
+			// }
+			// t.p[count++] = glMath::vec3f(v.x, v.y, v.z);
+			k++;
+		}
+		int nClippedTriangles = 0;
+		glMath::triangle4f clipped[2];
+		// the w component is 1 until it is projected by pers. matrix
+		// TODO: for now i put 1.0f in plane too.
+		nClippedTriangles = glMath::triangleNumClippedInPlane({0.0f, 0.0f, 0.1f, 1.0f}, {0.0f, 0.0f, -1.0f, 1.0f}, triafterView, clipped[0], clipped[1]);
+		// say looping in two triangles.
+		for (int m = 0; m < nClippedTriangles; m++)
+		{
+			// looping in each vertex of a  triangle
+			for (auto &j : clipped[m].p)
+			{
+				glMath::vec4f v(j.x, j.y, j.z, 1);
+				// glMath::vec3f v ((j.x + 1)*540, (j.y-1)*(-360), j.z);
+				// v =  proj*view*model * v;
+				v = proj * v;
+				// perspective division
+				if (v.w != 1 and v.w != 0)
+				{
+					v.x /= v.w;
+					v.y /= v.w;
+					v.z /= v.w;
+					v.w = 1;
+				}
+				t.p[count++] = glMath::vec3f(v.x, v.y, v.z);
 			}
-			t.p[count++] = glMath::vec3f(v.x, v.y, v.z);
 		}
 		meshCube.tris.push_back(t);
 	}
@@ -178,14 +216,15 @@ void Cube::updateVertices()
 
 void Cube::toWindowCoord()
 {
-	for (auto &i : meshCube.tris) {
+	for (auto &i : meshCube.tris)
+	{
 		for (auto &j : i.p)
 		{
 			glMath::vec3f v(j.x, j.y, j.z);
-			j = glMath::vec3f((v.x + 1)*540, (v.y-1)*(-360), v.z);
+			// std::cout<<window->getSize().x<<" "<<window->getSize().y<<std::endl;
+			j = glMath::vec3f((v.x + 1) * (window->getSize().x / 2.0f), -(v.y - 1) * (window->getSize().y / 2.0f), v.z);
 		}
 	}
-	
 }
 
 void Cube::fillBottomFlatTriangle(sf::Vector2f v1, sf::Vector2f v2, sf::Vector2f v3, sf::Color color)
