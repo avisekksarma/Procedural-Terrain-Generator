@@ -61,7 +61,7 @@ namespace glMath
         {
             return x * v.x + y * v.y + z * v.z;
         }
-        T crossProduct(vec3<T> &v) const
+        vec3<T> crossProduct(vec3<T> &v) const
         {
             return vec3<T>(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
         }

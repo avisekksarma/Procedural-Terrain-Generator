@@ -110,7 +110,7 @@ int main()
         // change model matrix here
         // -----------------------------
         cube.scale(glMath::vec3f(0.5, 0.5, 0.5));
-        cube.translate(glMath::vec3f(140.0f, 0.0, -2.0f));
+        // cube.translate(glMath::vec3f(140.0f, 0.0, -2.0f));
 
         // -----------------------------
         // change view matrix here
@@ -125,6 +125,7 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
+
             // check the type of the event...
             switch (event.type)
             {
