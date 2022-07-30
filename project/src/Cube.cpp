@@ -170,7 +170,8 @@ void Cube::updateVertices()
 			// glMath::vec3f v ((j.x + 1)*540, (j.y-1)*(-360), j.z);
 			// v =  proj*view*model * v;
 			v = view * model * v;
-			triafterView.p[k] = glMath::vec4f(v.x, v.y, v.z, v.w);
+			triafterView.p[k] = v; 
+			
 			// v = proj * v;
 			// // perspective division
 			// if (v.w != 1 and v.w != 0)
@@ -188,7 +189,7 @@ void Cube::updateVertices()
 		glMath::triangle4f clipped[2];
 		// the w component is 1 until it is projected by pers. matrix
 		// TODO: for now i put 1.0f in plane too.
-		nClippedTriangles = glMath::triangleNumClippedInPlane({0.0f, 0.0f, 0.1f, 1.0f}, {0.0f, 0.0f, -1.0f, 1.0f}, triafterView, clipped[0], clipped[1]);
+		nClippedTriangles = glMath::triangleNumClippedInPlane<float>({0.0f, 0.0f, 2.0f, 0.0f}, {0.0f, 0.0f, -1.0f, 0.0f}, triafterView, clipped[0], clipped[1]);
 		// say looping in two triangles.
 		for (int m = 0; m < nClippedTriangles; m++)
 		{

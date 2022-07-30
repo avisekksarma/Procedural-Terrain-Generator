@@ -727,7 +727,8 @@ namespace glMath
     // }
 
     // // clipping parts:
-    vec4f linePlaneIntersection(vec4f &plane_p, vec4f &plane_n, vec4f &lineStart, vec4f &lineEnd)
+    template<typename T>
+    vec4f linePlaneIntersection(vec4<T> &plane_p, vec4<T>  &plane_n, vec4<T> &lineStart, vec4<T> &lineEnd)
     {
         plane_n = glMath::normalize(plane_n);
         float plane_d = -plane_n.dotProduct(plane_p);
@@ -740,7 +741,8 @@ namespace glMath
     }
 
     // changed in in_tri definition for tri4f
-    int triangleNumClippedInPlane(vec4f plane_p, vec4f plane_n, triangle4f &in_tri, triangle4f &out_tri1, triangle4f &out_tri2)
+    template<typename T>
+    int triangleNumClippedInPlane(vec4<T> plane_p, vec4<T> plane_n, triangle4<T> &in_tri, triangle4<T> &out_tri1, triangle4<T> &out_tri2)
     {
         plane_n = glMath::normalize(plane_n);
 
@@ -825,8 +827,8 @@ namespace glMath
 
             // but the two new points are at the locations where the
             // original sides of the triangle (lines) intersect with the plane
-            out_tri1.p[1] = linePlaneIntersection(plane_p, plane_n, *inside_points[0], *outside_points[0]);
-            out_tri1.p[2] = linePlaneIntersection(plane_p, plane_n, *inside_points[0], *outside_points[1]);
+            out_tri1.p[1] = linePlaneIntersection<float>(plane_p, plane_n, *inside_points[0], *outside_points[0]);
+            out_tri1.p[2] = linePlaneIntersection<float>(plane_p, plane_n, *inside_points[0], *outside_points[1]);
 
             return 1; // Return the newly formed single triangle
         }
@@ -849,16 +851,18 @@ namespace glMath
             // intersects with the plane
             out_tri1.p[0] = *inside_points[0];
             out_tri1.p[1] = *inside_points[1];
-            out_tri1.p[2] = linePlaneIntersection(plane_p, plane_n, *inside_points[0], *outside_points[0]);
+            out_tri1.p[2] = linePlaneIntersection<float>(plane_p, plane_n, *inside_points[0], *outside_points[0]);
 
             // The second triangle is composed of one of he inside points, a
             // new point determined by the intersection of the other side of the
             // triangle and the plane, and the newly created point above
             out_tri2.p[0] = *inside_points[1];
             out_tri2.p[1] = out_tri1.p[2];
-            out_tri2.p[2] = linePlaneIntersection(plane_p, plane_n, *inside_points[1], *outside_points[0]);
+            out_tri2.p[2] = linePlaneIntersection<float>(plane_p, plane_n, *inside_points[1], *outside_points[0]);
 
             return 2; // Return two newly formed triangles which form a quad
+        }else{
+            return -1;
         }
     }
 
