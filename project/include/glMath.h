@@ -8,21 +8,21 @@ namespace glMath
     //-----------------------------------------------------------------
     // vec3 class
     //-----------------------------------------------------------------
-    template<typename T> 
-    class vec3 
-    { 
-    public: 
-        vec3() : x(0), y(0), z(0) {} 
-        vec3(T xx) : x(xx), y(xx), z(xx) {} 
-        vec3(T xx, T yy, T zz) : x(xx), y(yy), z(zz) {} 
+    template <typename T>
+    class vec3
+    {
+    public:
+        vec3() : x(0), y(0), z(0) {}
+        vec3(T xx) : x(xx), y(xx), z(xx) {}
+        vec3(T xx, T yy, T zz) : x(xx), y(yy), z(zz) {}
 
         // operator overloading
         // --------------------
-        vec3 operator + (const vec3 &v) const 
-        { 
-            return vec3(x + v.x, y + v.y, z + v.z); 
-        } 
-        vec3& operator +=(const vec3 &v) 
+        vec3 operator+(const vec3 &v) const
+        {
+            return vec3(x + v.x, y + v.y, z + v.z);
+        }
+        vec3 &operator+=(const vec3 &v)
         {
             x += v.x;
             y += v.y;
@@ -34,64 +34,65 @@ namespace glMath
             x -= v.x;
             y -= v.y;
             z -= v.z;
-            return *this; 
-        } 
-        vec3 operator - (const vec3 v) const 
-        { 
+            return *this;
+        }
+        vec3 operator-(const vec3 v) const
+        {
             return vec3(x - v.x, y - v.y, z - v.z);
-        } 
-        vec3 operator * (const T r) const 
-        { 
+        }
+        vec3 operator*(const T r) const
+        {
             return vec3(x * r, y * r, z * r);
-        } 
+        }
 
-        T& operator [] (uint8_t i) 
-        { 
+        T &operator[](uint8_t i)
+        {
             return (&x)[i];
-        } 
+        }
 
-        friend std::ostream& operator << (std::ostream &s, const vec3<T> &v) 
-        { 
-            return s << '(' << v.x << ' ' << v.y << ' ' << v.z << ')'; 
-        } 
+        friend std::ostream &operator<<(std::ostream &s, const vec3<T> &v)
+        {
+            return s << '(' << v.x << ' ' << v.y << ' ' << v.z << ')';
+        }
 
         // product
         // -------
-        T dotProduct(const vec3<T> &v) const 
-        { 
-           return x * v.x + y * v.y + z * v.z;
-        } 
-        T crossProduct(vec3<T>& v) const
+        T dotProduct(const vec3<T> &v) const
         {
-           return vec3<T>(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
-        } 
+            return x * v.x + y * v.y + z * v.z;
+        }
+        T crossProduct(vec3<T> &v) const
+        {
+            return vec3<T>(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
+        }
 
         // properties
         // ----------
-        T norm() const 
-        { 
+        T norm() const
+        {
             return x * x + y * y + z * z;
-        } 
+        }
 
-        T length() const 
-        { 
+        T length() const
+        {
             return sqrt(norm());
-        } 
+        }
 
-        vec3& normalize() 
-        { 
-            T n = norm(); 
-            if (n > 0) { 
-                T factor = 1 / sqrt(n); 
+        vec3 &normalize()
+        {
+            T n = norm();
+            if (n > 0)
+            {
+                T factor = 1 / sqrt(n);
                 x *= factor;
                 y *= factor;
-                z *= factor; 
-            } 
-        
-            return *this; 
-        } 
-        T x, y, z; 
-    }; 
+                z *= factor;
+            }
+
+            return *this;
+        }
+        T x, y, z;
+    };
 
     //-----------------------------------------------------------------
     // non member functions of vec3
@@ -102,160 +103,173 @@ namespace glMath
     {
         glMath::vec3<T> p[3];
     };
+    
     typedef triangle<float> trianglef;
 
     template <typename T>
     vec3<T> normalize(vec3<T> v)
     {
         vec3<T> temp = v;
-        T n = v.norm(); 
-        if (n > 0) { 
-            T factor = 1 / sqrt(n); 
+        T n = v.norm();
+        if (n > 0)
+        {
+            T factor = 1 / sqrt(n);
             temp.x *= factor;
             temp.y *= factor;
-            temp.z *= factor; 
-        } 
-        return temp; 
-    } 
+            temp.z *= factor;
+        }
+        return temp;
+    }
 
     template <typename T>
-    vec3<T> cross(vec3<T> v1, vec3<T> v) 
-    { 
-        return vec3<T>(v1.y * v.z -v1.z * v.y,v1.z * v.x -v1.x * v.z,v1.x * v.y -v1.y * v.x); 
-    } 
+    vec3<T> cross(vec3<T> v1, vec3<T> v)
+    {
+        return vec3<T>(v1.y * v.z - v1.z * v.y, v1.z * v.x - v1.x * v.z, v1.x * v.y - v1.y * v.x);
+    }
 
     template <typename T>
-    T dot(const vec3<T> &v, const vec3<T>&s) 
-    { 
-        return s.x * v.x +s.y * v.y + s.z * v.z; 
-    } 
+    T dot(const vec3<T> &v, const vec3<T> &s)
+    {
+        return s.x * v.x + s.y * v.y + s.z * v.z;
+    }
 
-    typedef vec3<float> vec3f; 
-	typedef vec3<int> vec3i;
+    typedef vec3<float> vec3f;
+    typedef vec3<int> vec3i;
 
     //-----------------------------------------------------------------
     // vec4 class
     //-----------------------------------------------------------------
 
-    template<typename T> 
-    class vec4 
-    { 
-    public: 
-        vec4() : x(0), y(0), z(0), w(0) {} 
-        vec4(T xx) : x(xx), y(xx), z(xx), w(xx) {} 
-        vec4(T xx, T yy, T zz, T ww) : x(xx), y(yy), z(zz), w(ww) {} 
+    template <typename T>
+    class vec4
+    {
+    public:
+        vec4() : x(0), y(0), z(0), w(0) {}
+        vec4(T xx) : x(xx), y(xx), z(xx), w(xx) {}
+        vec4(T xx, T yy, T zz, T ww) : x(xx), y(yy), z(zz), w(ww) {}
 
         // operator overloading
         // --------------------
-        vec4 operator + (const vec4 &v) const 
+        vec4 operator+(const vec4 &v) const
         {
-             return vec4(x + v.x, y + v.y, z + v.z, w + v.w);
-        } 
-        vec4 operator * (const vec4 &v) const 
-        { 
-            return vec4(x * v.x, y * v.y, z * v.z, w * v.w);
+            return vec4(x + v.x, y + v.y, z + v.z, w + v.w);
+        }
+        vec4 operator*(const vec4 &v) const
+        {
+            return vec4(x + v.x, y + v.y, z + v.z, w + v.w);
         } 
 
-        vec4& operator +=(const vec4 &v) 
+        vec4 &operator+=(const vec4 &v)
         {
             x += v.x;
             y += v.y;
             z += v.z;
             w += v.w;
-            return *this; 
-        } 
+            return *this;
+        }
 
-        vec4& operator -=(const vec4 &v) 
+        vec4 &operator-=(const vec4 &v)
         {
             x -= v.x;
             y -= v.y;
             z -= v.z;
             w -= v.w;
-            return *this; 
-        } 
+            return *this;
+        }
 
-        vec4 operator - (const vec4 v) const 
-        { 
-            return vec4(x - v.x, y - v.y, z - v.z, w - v.w);
-        } 
-        
-        vec4 operator * (const T r) const 
+        vec4 operator-(const vec4 v) const
         {
-            return vec4(x * r, y * r, z * r, w * r); 
-        } 
+            return vec4(x - v.x, y - v.y, z - v.z, w - v.w);
+        }
 
-        T& operator [] (uint8_t i)
-        { 
-           return (&x)[i];
-        } 
+        vec4 operator*(const T r) const
+        {
+            return vec4(x * r, y * r, z * r, w * r);
+        }
 
-        friend std::ostream& operator << (std::ostream &s, const vec4<T> &v) 
-        { 
-            return s << '(' << v.x << ' ' << v.y << ' ' << v.z << v.w << ')'; 
-        } 
+        T &operator[](uint8_t i)
+        {
+            return (&x)[i];
+        }
+
+        friend std::ostream &operator<<(std::ostream &s, const vec4<T> &v)
+        {
+            return s << '(' << v.x << ' ' << v.y << ' ' << v.z << v.w << ')';
+        }
 
         // product
         // -------
-        T dotProduct(const vec4<T> &v) const 
-        { 
+        T dotProduct(const vec4<T> &v) const
+        {
             return x * v.x + y * v.y + z * v.z + w * v.w;
-        } 
+        }
 
         // properties
         // ----------
-        T norm() const 
-        { 
-            return x * x + y * y + z * z + w * w; 
-        } 
+        T norm() const
+        {
+            return x * x + y * y + z * z + w * w;
+        }
 
-        T length() const 
-        { 
-            return sqrt(norm()); 
-        } 
+        T length() const
+        {
+            return sqrt(norm());
+        }
 
-        vec4& normalize() 
-        { 
-            T n = norm(); 
-            if (n > 0) { 
-                T factor = 1 / sqrt(n); 
+        vec4 &normalize()
+        {
+            T n = norm();
+            if (n > 0)
+            {
+                T factor = 1 / sqrt(n);
                 x *= factor;
                 y *= factor;
-                z *= factor; 
-                w *= factor; 
-            } 
-        
-            return *this; 
-        } 
+                z *= factor;
+                w *= factor;
+            }
 
-        T x, y, z, w; 
-    }; 
+            return *this;
+        }
+
+        T x, y, z, w;
+    };
 
     //-----------------------------------------------------------------
     // non member functions of vec4
     //-----------------------------------------------------------------
-    
+
     template <typename T>
-    vec4<T> normalize(vec4<T> v) 
-    { 
+    vec4<T> normalize(vec4<T> v)
+    {
         vec4<T> temp = v;
-        T n = v.norm(); 
-        if (n > 0) { 
-            T factor = 1 / sqrt(n); 
+        T n = v.norm();
+        if (n > 0)
+        {
+            T factor = 1 / sqrt(n);
             temp.x *= factor;
-            temp.y *= factor; 
+            temp.y *= factor;
             temp.z *= factor;
-            temp.w *= factor; 
-        } 
-        return temp; 
-    } 
+            temp.w *= factor;
+        }
+        return temp;
+    }
 
     template <typename T>
-    T dot(const vec4<T> &v, const vec4<T>&s) 
-    { 
-        return s.x * v.x +s.y * v.y + s.z * v.z + s.w * v.w; 
-    } 
+    T dot(const vec4<T> &v, const vec4<T> &s)
+    {
+        return s.x * v.x + s.y * v.y + s.z * v.z + s.w * v.w;
+    }
 
-    typedef vec4<float> vec4f; 
+    typedef vec4<float> vec4f;
+
+    // -------------
+    // angle functions
+    // -------------
+    template <typename T>
+    T degToRadians(T degree)
+    {
+        return degree * PIE / 180.0f;
+    }
 
     //-----------------------------------------------------------------
     // mat4 class
@@ -329,7 +343,7 @@ namespace glMath
             x[3][3] = p;
         }
 
-        mat4(vec4<T>v1,vec4<T>v2,vec4<T>v3,vec4<T>v4)
+        mat4(vec4<T> v1, vec4<T> v2, vec4<T> v3, vec4<T> v4)
         {
             x[0][0] = v1.x;
             x[0][1] = v1.y;
@@ -349,24 +363,24 @@ namespace glMath
             x[3][3] = v4.w;
         }
 
-		const T* operator [] (uint8_t i) const
-        { 
-            return x[i]; 
+        const T *operator[](uint8_t i) const
+        {
+            return x[i];
         }
 
-        T* operator [] (uint8_t i) 
-        { 
-            return x[i]; 
+        T *operator[](uint8_t i)
+        {
+            return x[i];
         }
 
-        mat4<T> operator * (const mat4<T>& v) const
+        mat4<T> operator*(const mat4<T> &v) const
         {
             mat4<T> tmp(0.0f);
             multiply(*this, v, tmp);
             return tmp;
         }
 
-        mat4<T> operator * (T v) const
+        mat4<T> operator*(T v) const
         {
             mat4 tmp(
                 x[0][0] * v,
@@ -384,8 +398,7 @@ namespace glMath
                 x[3][0] * v,
                 x[3][1] * v,
                 x[3][2] * v,
-                x[3][3] * v
-            );
+                x[3][3] * v);
             return tmp;
         }
 
@@ -398,27 +411,29 @@ namespace glMath
             return temp;
         }
 
-        glMath::vec4<T> operator * (const glMath::vec4<T>& v) const
+        glMath::vec4<T> operator*(const glMath::vec4<T> &v) const
         {
             glMath::vec4<T> temp;
-            temp.x = x[0][0] * v.x + x[0][1] * v.y + x[0][2] * v.z + x[0][3]*v.w;
-            temp.y = x[1][0] * v.x + x[1][1] * v.y + x[1][2] * v.z + x[1][3]*v.w;
-            temp.z = x[2][0] * v.x + x[2][1] * v.y + x[2][2] * v.z + x[2][3]*v.w;
-            temp.w = x[3][0] * v.x + x[3][1] * v.y + x[3][2] * v.z + x[3][3]*v.w;
+            temp.x = x[0][0] * v.x + x[0][1] * v.y + x[0][2] * v.z + x[0][3] * v.w;
+            temp.y = x[1][0] * v.x + x[1][1] * v.y + x[1][2] * v.z + x[1][3] * v.w;
+            temp.z = x[2][0] * v.x + x[2][1] * v.y + x[2][2] * v.z + x[2][3] * v.w;
+            temp.w = x[3][0] * v.x + x[3][1] * v.y + x[3][2] * v.z + x[3][3] * v.w;
             return temp;
         }
 
-        static void multiply(const mat4<T> &a, const mat4<T>& b, mat4<T> &c) 
-        { 
-            for (uint8_t i = 0; i < 4; ++i) { 
-                for (uint8_t j = 0; j < 4; ++j) { 
-                    c[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j] + 
-                        a[i][2] * b[2][j] + a[i][3] * b[3][j]; 
-                } 
-            } 
-        } 
+        static void multiply(const mat4<T> &a, const mat4<T> &b, mat4<T> &c)
+        {
+            for (uint8_t i = 0; i < 4; ++i)
+            {
+                for (uint8_t j = 0; j < 4; ++j)
+                {
+                    c[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j] +
+                              a[i][2] * b[2][j] + a[i][3] * b[3][j];
+                }
+            }
+        }
 
-        mat4<T>& transpose()
+        mat4<T> &transpose()
         {
             mat4 tmp(
                 x[0][0],
@@ -530,7 +545,7 @@ namespace glMath
         return (scaleMat * m);
     }
     template <typename T>
-    mat4<T> perspective(mat4<T> &m, T fov, float screenWidth, float screenHeight, T nearZ, T farZ)
+    mat4<T> perspective(T fov, float screenWidth, float screenHeight, T nearZ, T farZ)
     {
         // T tangent = tan(fovY / 2);      // tangent of half fovY
         // T height = front * tangent;     // half height of near plane
@@ -539,7 +554,7 @@ namespace glMath
         // T r = width, t = height, n = front, f = back;
 
         mat4<T> perspecMat(0.0f);
-        fov = fov * 3.14f / 180.0f;
+        fov = fov * (3.14f / 180.0f);
         T aspectRatio = screenWidth / screenHeight;
         T tangent = tan(fov / 2.0f);
         tangent = 1 / tangent;
@@ -548,12 +563,13 @@ namespace glMath
         perspecMat[1][1] = tangent;
         perspecMat[2][2] = -(nearZ - farZ) / (nearZ - farZ);
         perspecMat[2][3] = (2 * nearZ * farZ) / (nearZ - farZ);
-        perspecMat[3][2] = 1;
-        return perspecMat * m;
+        perspecMat[3][2] = -1;
+
+        return perspecMat;
     }
 
     template <typename T>
-    mat4<T> inverse(mat4<T>& m)
+    mat4<T> inverse(mat4<T> &m)
     {
         T Coef00 = m[2][2] * m[3][3] - m[3][2] * m[2][3];
         T Coef02 = m[1][2] * m[3][3] - m[3][2] * m[1][3];
@@ -608,11 +624,11 @@ namespace glMath
         return (temp);
     }
 
-    template<typename T>
+    template <typename T>
     mat4<T> lookAt(vec3<T> from, vec3<T> to, vec3<T> temp)
     {
         vec3<T> forward = glMath::normalize(to - from);
-        vec3<T> right = glMath::cross(forward, glMath::normalize(temp));
+        vec3<T> right = glMath::normalize(glMath::cross(forward, glMath::normalize(temp)));
         vec3<T> up = glMath::cross(right, forward);
 
         mat4<T> Result(1.0f);
@@ -626,208 +642,213 @@ namespace glMath
         Result[2][0] = -forward.x;
         Result[2][1] = -forward.y;
         Result[2][2] = -forward.z;
-        Result[0][3] = -glMath::dot(right, from);
-        Result[1][3] = -glMath::dot(up, from);
-        Result[2][3] = glMath::dot(forward, from);
+        // Result[0][3] = -glMath::dot(right, from);
+        // Result[1][3] = -glMath::dot(up, from);
+        // Result[2][3] = glMath::dot(forward, from);
+        Result[0][3] = -from.x;
+        Result[1][3] = -from.y;
+        Result[2][3] = -from.z;
 
-        Result.transpose();
+        Result[3][3] = 1;
+
+        // Result.transpose();
 
         return Result;
     }
 
-	typedef mat4<float> mat4f;
+    typedef mat4<float> mat4f;
 
-    template <typename T>
-    void mouseMovement(bool &fM, T &yaw, T &pitch, T &lastX, T &lastY, T xPosIn, T yPosIn)
-    {
-        // TODO:  hide the cursor and capture mouse/cursor.
-        // TODO: in processevent loop call these functions when needed.
-        // maybe initialize yaw,pitch values before using
-        // bool firstMouse = true;
-        // float yaw = -90.0f;
-        // float pitch = 0.0f;
-        // float lastX = 800.0f / 2.0;
-        // float lastY = 600.0 / 2.0;
-        // also cameraFront
+    // template <typename T>
+    // void mouseMovement(bool &fM, T &yaw, T &pitch, T &lastX, T &lastY, T xPosIn, T yPosIn)
+    // {
+    //     // TODO:  hide the cursor and capture mouse/cursor.
+    //     // TODO: in processevent loop call these functions when needed.
+    //     // maybe initialize yaw,pitch values before using
+    //     // bool firstMouse = true;
+    //     // float yaw = -90.0f;
+    //     // float pitch = 0.0f;
+    //     // float lastX = 800.0f / 2.0;
+    //     // float lastY = 600.0 / 2.0;
+    //     // also cameraFront
 
-        // for camera i can have like this initially
-        // camera
-        // glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-        // glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-        // glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-        float xpos = xposIn;
-        float ypos = yposIn;
+    //     // for camera i can have like this initially
+    //     // camera
+    //     // glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+    //     // glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+    //     // glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    //     float xpos = xposIn;
+    //     float ypos = yposIn;
 
-        if (firstMouse)
-        {
-            lastX = xpos;
-            lastY = ypos;
-            firstMouse = false;
-        }
+    //     if (firstMouse)
+    //     {
+    //         lastX = xpos;
+    //         lastY = ypos;
+    //         firstMouse = false;
+    //     }
 
-        float xoffset = xpos - lastX;
-        float yoffset = ypos - lastY;
-        lastX = xpos;
-        lastY = ypos;
+    //     float xoffset = xpos - lastX;
+    //     float yoffset = ypos - lastY;
+    //     lastX = xpos;
+    //     lastY = ypos;
 
-        float sensitivity = 0.1f;
-        xoffset *= sensitivity;
-        yoffset *= sensitivity;
+    //     float sensitivity = 0.1f;
+    //     xoffset *= sensitivity;
+    //     yoffset *= sensitivity;
 
-        yaw += xoffset;
-        pitch += yoffset;
+    //     yaw += xoffset;
+    //     pitch += yoffset;
 
-        if (pitch > 89.0f)
-            pitch = 89.0f;
-        if (pitch < -89.0f)
-            pitch = -89.0f;
+    //     if (pitch > 89.0f)
+    //         pitch = 89.0f;
+    //     if (pitch < -89.0f)
+    //         pitch = -89.0f;
 
-        glMath::vec3f front;
-        front.x = cos(glMath::degToRadians(yaw)) * cos(glMath::degToRadians(pitch));
-        front.y = sin(glMath::degToRadians(pitch));
-        front.z = sin(glMath::degToRadians(yaw)) * cos(glMath::degToRadians(pitch));
-        cameraFront = glMath::normalize(front);
-    }
-    template <typename T>
-    void scrollMovement(T xoffset, T yoffset, T &fov)
-    {
-        fov -= (float)yoffset;
-        if (fov < 1.0f)
-            fov = 1.0f;
-        if (fov > 45.0f)
-            fov = 45.0f;
-    }
+    //     glMath::vec3f front;
+    //     front.x = cos(glMath::degToRadians(yaw)) * cos(glMath::degToRadians(pitch));
+    //     front.y = sin(glMath::degToRadians(pitch));
+    //     front.z = sin(glMath::degToRadians(yaw)) * cos(glMath::degToRadians(pitch));
+    //     cameraFront = glMath::normalize(front);
+    // }
+    // template <typename T>
+    // void scrollMovement(T xoffset, T yoffset, T &fov)
+    // {
+    //     fov -= (float)yoffset;
+    //     if (fov < 1.0f)
+    //         fov = 1.0f;
+    //     if (fov > 45.0f)
+    //         fov = 45.0f;
+    // }
 
-    // clipping parts:
-    vec3f linePlaneIntersection(vec3f &plane_p, vec3f &plane_n, vec3f &lineStart, vec3f &lineEnd)
-    {
-        plane_n = glMath::normalize(plane_n);
-        float plane_d = -plane_n.dotProduct(plane_p);
-        float ad = lineStart.dotProduct(plane_n);
-        float bd = lineEnd.dotProduct(plane_n);
-        float t = (-plane_d - ad) / (bd - ad);
-        vec3f lineStartToEnd = lineEnd - lineStart;
-        vec3f lineToIntersect = lineStartToEnd * t;
-        return lineStart + lineToIntersect;
-    }
+    // // clipping parts:
+    // vec3f linePlaneIntersection(vec3f &plane_p, vec3f &plane_n, vec3f &lineStart, vec3f &lineEnd)
+    // {
+    //     plane_n = glMath::normalize(plane_n);
+    //     float plane_d = -plane_n.dotProduct(plane_p);
+    //     float ad = lineStart.dotProduct(plane_n);
+    //     float bd = lineEnd.dotProduct(plane_n);
+    //     float t = (-plane_d - ad) / (bd - ad);
+    //     vec3f lineStartToEnd = lineEnd - lineStart;
+    //     vec3f lineToIntersect = lineStartToEnd * t;
+    //     return lineStart + lineToIntersect;
+    // }
 
-    int triangleNumClippedInPlane(vec3f plane_p, vec3f plane_n, trianglef &in_tri, trianglef &out_tri1, trianglef &out_tri2)
-    {
-        plane_n = glMath::normalize(plane_n);
+    // int triangleNumClippedInPlane(vec3f plane_p, vec3f plane_n, trianglef &in_tri, trianglef &out_tri1, trianglef &out_tri2)
+    // {
+    //     plane_n = glMath::normalize(plane_n);
 
-        // Return signed shortest distance from point to plane, plane normal must be normalised
-        auto dist = [&](vec3f &p)
-        {
-            vec3f n = glMath::normalize(p);
-            return (plane_n.x * p.x + plane_n.y * p.y + plane_n.z * p.z - plane_n.dotProduct(plane_p));
-        };
+    //     // Return signed shortest distance from point to plane, plane normal must be normalised
+    //     auto dist = [&](vec3f &p)
+    //     {
+    //         vec3f n = glMath::normalize(p);
+    //         return (plane_n.x * p.x + plane_n.y * p.y + plane_n.z * p.z - plane_n.dotProduct(plane_p));
+    //     };
 
-        // Create two temporary storage arrays to classify points either side of plane
-        // If distance sign is positive, point lies on "inside" of plane
-        vec3f *inside_points[3];
-        int nInsidePointCount = 0;
-        vec3f *outside_points[3];
-        int nOutsidePointCount = 0;
+    //     // Create two temporary storage arrays to classify points either side of plane
+    //     // If distance sign is positive, point lies on "inside" of plane
+    //     vec3f *inside_points[3];
+    //     int nInsidePointCount = 0;
+    //     vec3f *outside_points[3];
+    //     int nOutsidePointCount = 0;
 
-        // Get signed distance of each point in triangle to plane
-        float d0 = dist(in_tri.p[0]);
-        float d1 = dist(in_tri.p[1]);
-        float d2 = dist(in_tri.p[2]);
+    //     // Get signed distance of each point in triangle to plane
+    //     float d0 = dist(in_tri.p[0]);
+    //     float d1 = dist(in_tri.p[1]);
+    //     float d2 = dist(in_tri.p[2]);
 
-        if (d0 >= 0)
-        {
-            inside_points[nInsidePointCount++] = &in_tri.p[0];
-        }
-        else
-        {
-            outside_points[nOutsidePointCount++] = &in_tri.p[0];
-        }
-        if (d1 >= 0)
-        {
-            inside_points[nInsidePointCount++] = &in_tri.p[1];
-        }
-        else
-        {
-            outside_points[nOutsidePointCount++] = &in_tri.p[1];
-        }
-        if (d2 >= 0)
-        {
-            inside_points[nInsidePointCount++] = &in_tri.p[2];
-        }
-        else
-        {
-            outside_points[nOutsidePointCount++] = &in_tri.p[2];
-        }
+    //     if (d0 >= 0)
+    //     {
+    //         inside_points[nInsidePointCount++] = &in_tri.p[0];
+    //     }
+    //     else
+    //     {
+    //         outside_points[nOutsidePointCount++] = &in_tri.p[0];
+    //     }
+    //     if (d1 >= 0)
+    //     {
+    //         inside_points[nInsidePointCount++] = &in_tri.p[1];
+    //     }
+    //     else
+    //     {
+    //         outside_points[nOutsidePointCount++] = &in_tri.p[1];
+    //     }
+    //     if (d2 >= 0)
+    //     {
+    //         inside_points[nInsidePointCount++] = &in_tri.p[2];
+    //     }
+    //     else
+    //     {
+    //         outside_points[nOutsidePointCount++] = &in_tri.p[2];
+    //     }
 
-        // Now break the input triangle into
-        // smaller output triangles if required. There are four possible
-        // outcomes
+    //     // Now break the input triangle into
+    //     // smaller output triangles if required. There are four possible
+    //     // outcomes
 
-        if (nInsidePointCount == 0)
-        {
-            // All points lie on the outside of plane, so clip whole triangle
-            // It ceases to exist
+    //     if (nInsidePointCount == 0)
+    //     {
+    //         // All points lie on the outside of plane, so clip whole triangle
+    //         // It ceases to exist
 
-            return 0; // No returned triangles are valid
-        }
+    //         return 0; // No returned triangles are valid
+    //     }
 
-        if (nInsidePointCount == 3)
-        {
-            // All points lie on the inside of plane, so do nothing
-            // and allow the triangle to simply pass through
-            out_tri1 = in_tri;
-            return 1; // Just the one returned original triangle is valid
-        }
+    //     if (nInsidePointCount == 3)
+    //     {
+    //         // All points lie on the inside of plane, so do nothing
+    //         // and allow the triangle to simply pass through
+    //         out_tri1 = in_tri;
+    //         return 1; // Just the one returned original triangle is valid
+    //     }
 
-        if (nInsidePointCount == 1 && nOutsidePointCount == 2)
-        {
-            // Triangle should be clipped. As two points lie outside
-            // the plane, the triangle simply becomes a smaller triangle
+    //     if (nInsidePointCount == 1 && nOutsidePointCount == 2)
+    //     {
+    //         // Triangle should be clipped. As two points lie outside
+    //         // the plane, the triangle simply becomes a smaller triangle
 
-            // Copy appearance info to new triangle
-            // out_tri1.col = in_tri.col;
-            // out_tri1.sym = in_tri.sym;
+    //         // Copy appearance info to new triangle
+    //         // out_tri1.col = in_tri.col;
+    //         // out_tri1.sym = in_tri.sym;
 
-            // The inside point is valid, so keep that...
-            out_tri1.p[0] = *inside_points[0];
+    //         // The inside point is valid, so keep that...
+    //         out_tri1.p[0] = *inside_points[0];
 
-            // but the two new points are at the locations where the
-            // original sides of the triangle (lines) intersect with the plane
-            out_tri1.p[1] = linePlaneIntersection(plane_p, plane_n, *inside_points[0], *outside_points[0]);
-            out_tri1.p[2] = linePlaneIntersection(plane_p, plane_n, *inside_points[0], *outside_points[1]);
+    //         // but the two new points are at the locations where the
+    //         // original sides of the triangle (lines) intersect with the plane
+    //         out_tri1.p[1] = linePlaneIntersection(plane_p, plane_n, *inside_points[0], *outside_points[0]);
+    //         out_tri1.p[2] = linePlaneIntersection(plane_p, plane_n, *inside_points[0], *outside_points[1]);
 
-            return 1; // Return the newly formed single triangle
-        }
+    //         return 1; // Return the newly formed single triangle
+    //     }
 
-        if (nInsidePointCount == 2 && nOutsidePointCount == 1)
-        {
-            // Triangle should be clipped. As two points lie inside the plane,
-            // the clipped triangle becomes a "quad". Fortunately, we can
-            // represent a quad with two new triangles
+    //     if (nInsidePointCount == 2 && nOutsidePointCount == 1)
+    //     {
+    //         // Triangle should be clipped. As two points lie inside the plane,
+    //         // the clipped triangle becomes a "quad". Fortunately, we can
+    //         // represent a quad with two new triangles
 
-            // Copy appearance info to new triangles
-            // out_tri1.col = in_tri.col;
-            // out_tri1.sym = in_tri.sym;
+    //         // Copy appearance info to new triangles
+    //         // out_tri1.col = in_tri.col;
+    //         // out_tri1.sym = in_tri.sym;
 
-            // out_tri2.col = in_tri.col;
-            // out_tri2.sym = in_tri.sym;
+    //         // out_tri2.col = in_tri.col;
+    //         // out_tri2.sym = in_tri.sym;
 
-            // The first triangle consists of the two inside points and a new
-            // point determined by the location where one side of the triangle
-            // intersects with the plane
-            out_tri1.p[0] = *inside_points[0];
-            out_tri1.p[1] = *inside_points[1];
-            out_tri1.p[2] = linePlaneIntersection(plane_p, plane_n, *inside_points[0], *outside_points[0]);
+    //         // The first triangle consists of the two inside points and a new
+    //         // point determined by the location where one side of the triangle
+    //         // intersects with the plane
+    //         out_tri1.p[0] = *inside_points[0];
+    //         out_tri1.p[1] = *inside_points[1];
+    //         out_tri1.p[2] = linePlaneIntersection(plane_p, plane_n, *inside_points[0], *outside_points[0]);
 
-            // The second triangle is composed of one of he inside points, a
-            // new point determined by the intersection of the other side of the
-            // triangle and the plane, and the newly created point above
-            out_tri2.p[0] = *inside_points[1];
-            out_tri2.p[1] = out_tri1.p[2];
-            out_tri2.p[2] = linePlaneIntersection(plane_p, plane_n, *inside_points[1], *outside_points[0]);
+    //         // The second triangle is composed of one of he inside points, a
+    //         // new point determined by the intersection of the other side of the
+    //         // triangle and the plane, and the newly created point above
+    //         out_tri2.p[0] = *inside_points[1];
+    //         out_tri2.p[1] = out_tri1.p[2];
+    //         out_tri2.p[2] = linePlaneIntersection(plane_p, plane_n, *inside_points[1], *outside_points[0]);
 
-            return 2; // Return two newly formed triangles which form a quad
-        }
-    }
+    //         return 2; // Return two newly formed triangles which form a quad
+    //     }
+    // }
 
 }
