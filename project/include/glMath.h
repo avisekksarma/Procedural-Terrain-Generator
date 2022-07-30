@@ -103,6 +103,7 @@ namespace glMath
     {
         glMath::vec3<T> p[3];
     };
+    
     typedef triangle<float> trianglef;
 
     template <typename T>
@@ -563,6 +564,7 @@ namespace glMath
         perspecMat[2][2] = -(nearZ - farZ) / (nearZ - farZ);
         perspecMat[2][3] = (2 * nearZ * farZ) / (nearZ - farZ);
         perspecMat[3][2] = -1;
+
         return perspecMat;
     }
 
@@ -646,6 +648,8 @@ namespace glMath
         Result[0][3] = -from.x;
         Result[1][3] = -from.y;
         Result[2][3] = -from.z;
+
+        Result[3][3] = 1;
 
         // Result.transpose();
 

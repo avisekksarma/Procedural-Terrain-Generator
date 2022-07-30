@@ -1,39 +1,41 @@
 #include "../include/cube.h"
 #include "../include/glMath.h"
+#include "../include/constants.h"
 
 Cube::Cube(sf::RenderWindow& w): window(&w),model(glMath::mat4f(1.0f)),view(1.0f),proj(1.0f) {
 
 	local.tris = {
 		// SOUTH
 		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f) },
-		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, -0.5f, 0.5f) },
+		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f),     glMath::vec3f(0.5f, -0.5f, 0.5f) },
 
 		// EAST                                                      
-		{ glMath::vec3f(0.5f, -0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f) },
-		{ glMath::vec3f(0.5f, -0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f) },
+		{ glMath::vec3f(0.5f, -0.5f, 0.5f),     glMath::vec3f(0.5f, 0.5f, 0.5f),     glMath::vec3f(0.5f, 0.5f, -0.5f) },
+		{ glMath::vec3f(0.5f, -0.5f, 0.5f),     glMath::vec3f(0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f) },
 
 		// NORTH                                                     
-		{ glMath::vec3f(-0.5f, -0.5f, -0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f) },
-		{ glMath::vec3f(-0.5f, -0.5f, -0.5f),    glMath::vec3f(-0.5f, -0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f) },
+		{ glMath::vec3f(-0.5f, -0.5f, -0.5f),   glMath::vec3f(-0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f) },
+		{ glMath::vec3f(-0.5f, -0.5f, -0.5f),   glMath::vec3f(-0.5f, -0.5f, -0.5f),   glMath::vec3f(0.5f, -0.5f, -0.5f) },
 
 		// WEST                                                      
 		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f) },
-		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f),    glMath::vec3f(-0.5f, -0.5f, -0.5f) },
+		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f),   glMath::vec3f(-0.5f, -0.5f, -0.5f) },
 
 		// TOP                                                       
-		{ glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f) },
-		{ glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f) },
+		{ glMath::vec3f(-0.5f, 0.5f, 0.5f),     glMath::vec3f(-0.5f, 0.5f, -0.5f),   glMath::vec3f(0.5f, 0.5f, -0.5f) },
+		{ glMath::vec3f(-0.5f, 0.5f, 0.5f),     glMath::vec3f(0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f) },
 
 		// BOTTOM                                                    
-		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, -0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f) },
+		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, -0.5f, -0.5f),   glMath::vec3f(0.5f, -0.5f, -0.5f) },
 		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, 0.5f) }
 
 	};
 
+	// color = sf::Color(255,255,255);
 	first = true;
 }
 
-void Cube::drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, int color = 1)
+void Cube::drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, sf::Color color)
 {
 	// change to window coordinate first
 	p1.x = (p1.x+1) * 540;
@@ -63,7 +65,7 @@ void Cube::drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, in
 	first = (first)? false:true;
 }
 
-void Cube::BLA(int x0, int y0, int xl, int yl, int color)
+void Cube::BLA(int x0, int y0, int xl, int yl, sf::Color color)
 {
 	int delx = std::fabs(xl - x0);
 	int dely = std::fabs(yl - y0);
@@ -105,9 +107,9 @@ void Cube::BLA(int x0, int y0, int xl, int yl, int color)
 	}
 }
 
-void Cube::putpixel(float x, float y, int color)
+void Cube::putpixel(float x, float y, sf::Color color)
 {
-	sf::Vertex vertex(sf::Vector2f(x, y), sf::Color::White);
+	sf::Vertex vertex(sf::Vector2f(x, y), color);
 	window->draw(&vertex, 1, sf::Points);
 }
 
@@ -115,17 +117,19 @@ void Cube::render()
 {
 	for (auto &i : meshCube.tris)
 	{
-		drawTriangle(i.p[0], i.p[1], i.p[2]);
 		// fillTriangle(sf::Vector2f(i.p[0].x, i.p[0].y),
-		// 			sf::Vector2f(i.p[1].x, i.p[1].y),sf::Vector2f(i.p[2].x, i.p[2].y));
+		// 			sf::Vector2f(i.p[1].x, i.p[1].y),sf::Vector2f(i.p[2].x, i.p[2].y),sf::Color(255,255,255));
+		drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255,0,0));
 	}
 }
   
 void Cube::translate(glMath::vec3f p)
 {
-	// p.x = ((p.x)/540) - 1;
-	// p.y = (-(p.y)/360)+ 1;
-	// p.z = ((p.z)/540) - 1;
+	p.x = (float)(2*p.x)/constants::SCREEN_WIDTH;
+	p.y = (float)(2 * p.y)/constants::SCREEN_HEIGHT;
+	// p.z = (p.y)/720.f;
+	// p1.x = (p1.x+1) * 540;
+	// p1.y = (p1.y-1) * -360;
 	// p.normalize();
 
 	model = glMath::translate<float>(model, p);
@@ -138,7 +142,7 @@ void Cube::rotate(glMath::vec3f p, float angle)
 
 void Cube::scale(glMath::vec3f p)
 {
-	model = glMath::scale(model, p);
+	model = glMath::scale<float>(model, p);
 }
 
 void Cube::perspective(float fov,float sw,float sh,float nearZ,float farZ){
@@ -184,7 +188,7 @@ void Cube::toWindowCoord()
 	
 }
 
-void Cube::fillBottomFlatTriangle(sf::Vector2f v1, sf::Vector2f v2, sf::Vector2f v3)
+void Cube::fillBottomFlatTriangle(sf::Vector2f v1, sf::Vector2f v2, sf::Vector2f v3, sf::Color color)
 {
   float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
   float invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
@@ -195,13 +199,13 @@ void Cube::fillBottomFlatTriangle(sf::Vector2f v1, sf::Vector2f v2, sf::Vector2f
   for (int scanlineY = v1.y; scanlineY <= v2.y; scanlineY++)
   {
     // BLA((int)curx1, scanlineY, (int)curx2, scanlineY, 1);
-	scanLine((int)curx1, scanlineY, (int)curx2, scanlineY);
+	scanLine((int)curx1, scanlineY, (int)curx2, scanlineY, color);
     curx1 += invslope1;
     curx2 += invslope2;
   }
 }
 
-void Cube::fillTopFlatTriangle(sf::Vector2f v1, sf::Vector2f v2, sf::Vector2f v3)
+void Cube::fillTopFlatTriangle(sf::Vector2f v1, sf::Vector2f v2, sf::Vector2f v3, sf::Color color)
 {
   float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
   float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
@@ -212,13 +216,13 @@ void Cube::fillTopFlatTriangle(sf::Vector2f v1, sf::Vector2f v2, sf::Vector2f v3
   for (int scanlineY = v3.y; scanlineY > v1.y; scanlineY--)
   {
     // BLA((int)curx1, scanlineY, (int)curx2, scanlineY, 1);
-	scanLine((int)curx1, scanlineY, (int)curx2, scanlineY);
+	scanLine((int)curx1, scanlineY, (int)curx2, scanlineY, color);
     curx1 -= invslope1;
     curx2 -= invslope2;
   }
 }
 
-void Cube::scanLine(int x0, int y0, int x1, int y1)
+void Cube::scanLine(int x0, int y0, int x1, int y1, sf::Color color)
 {
 	int delx = std::fabs(x1 - x0);
     int a = 0;
@@ -226,28 +230,12 @@ void Cube::scanLine(int x0, int y0, int x1, int y1)
 
 	for(int i=0; i<= delx; i++)
 	{
-		putpixel(x0, y0, 1);
+		putpixel(x0, y0, color);
 		x0 += a;
 	}
-
-	// if(x1>x0)
-	// {
-	// 	max = x1;
-	// 	min = x0;
-	// }
-	// else 
-	// {
-	// 	max = x0;
-	// 	min = x1;
-	// }
-	// for(int i = min; i<= max; i++)
-	// {
-	// 	sf::Vertex vertex(sf::Vector2f(i, y0), sf::Color::White);
-	// 	window->draw(&vertex, 1, sf::Points);
-	// }
 }
 
-void Cube::fillTriangle(sf::Vector2f vt1, sf::Vector2f vt2, sf::Vector2f vt3)
+void Cube::fillTriangle(sf::Vector2f vt1, sf::Vector2f vt2, sf::Vector2f vt3, sf::Color color)
 {
 
 	vt1.x = (vt1.x+1) * 540;
@@ -283,20 +271,20 @@ void Cube::fillTriangle(sf::Vector2f vt1, sf::Vector2f vt2, sf::Vector2f vt3)
 	/* check for trivial case of bottom-flat triangle */
 	if (vt2.y == vt3.y)
 	{
-		fillBottomFlatTriangle(vt1, vt2, vt3);
+		fillBottomFlatTriangle(vt1, vt2, vt3, color);
 	}
 	/* check for trivial case of top-flat triangle */
 	else if (vt1.y == vt2.y)
 	{
-		fillTopFlatTriangle( vt1, vt2, vt3);
+		fillTopFlatTriangle( vt1, vt2, vt3, color);
 	}
 	else
 	{
 		/* general case - split the triangle in a topflat and bottom-flat one */
 		sf::Vector2f v4 = sf::Vector2f(
 		(int)(vt1.x + ((float)(vt2.y - vt1.y) / (float)(vt3.y - vt1.y)) * (vt3.x - vt1.x)), vt2.y);
-		fillBottomFlatTriangle( vt1, vt2, v4);
-		fillTopFlatTriangle( vt2, v4, vt3);
+		fillBottomFlatTriangle( vt1, vt2, v4, color);
+		fillTopFlatTriangle( vt2, v4, vt3, color);
 	}
 
 }
