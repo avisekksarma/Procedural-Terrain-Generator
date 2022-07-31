@@ -1,33 +1,61 @@
 #include "../include/cube.h"
 #include "../include/glMath.h"
 #include "../include/constants.h"
+#include <iostream>
+using namespace std;
 
-Cube::Cube(sf::RenderWindow& w): window(&w),model(glMath::mat4f(1.0f)),view(1.0f),proj(1.0f) {
+Cube::Cube(sf::RenderWindow &w) : window(&w), model(glMath::mat4f(1.0f)), view(1.0f), proj(1.0f)
+{
 
 	local.tris = {
 		// SOUTH
-		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f) },
-		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f),     glMath::vec3f(0.5f, -0.5f, 0.5f) },
+		{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, 0.5f)},
+		{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, 0.5f), glMath::vec3f(0.5f, -0.5f, 0.5f)},
 
-		// EAST                                                      
-		{ glMath::vec3f(0.5f, -0.5f, 0.5f),     glMath::vec3f(0.5f, 0.5f, 0.5f),     glMath::vec3f(0.5f, 0.5f, -0.5f) },
-		{ glMath::vec3f(0.5f, -0.5f, 0.5f),     glMath::vec3f(0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f) },
+		// EAST
+		{glMath::vec3f(0.5f, -0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f)},
+		{glMath::vec3f(0.5f, -0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, -0.5f, -0.5f)},
 
-		// NORTH                                                     
-		{ glMath::vec3f(-0.5f, -0.5f, -0.5f),   glMath::vec3f(-0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, 0.5f, -0.5f) },
-		{ glMath::vec3f(-0.5f, -0.5f, -0.5f),   glMath::vec3f(-0.5f, -0.5f, -0.5f),   glMath::vec3f(0.5f, -0.5f, -0.5f) },
+		// NORTH
+		{glMath::vec3f(-0.5f, -0.5f, -0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f)},
+		{glMath::vec3f(-0.5f, -0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, -0.5f, -0.5f)},
 
-		// WEST                                                      
-		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f) },
-		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, 0.5f, -0.5f),   glMath::vec3f(-0.5f, -0.5f, -0.5f) },
+		// WEST
+		{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f)},
+		{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f), glMath::vec3f(-0.5f, -0.5f, -0.5f)},
 
-		// TOP                                                       
-		{ glMath::vec3f(-0.5f, 0.5f, 0.5f),     glMath::vec3f(-0.5f, 0.5f, -0.5f),   glMath::vec3f(0.5f, 0.5f, -0.5f) },
-		{ glMath::vec3f(-0.5f, 0.5f, 0.5f),     glMath::vec3f(0.5f, 0.5f, -0.5f),    glMath::vec3f(0.5f, 0.5f, 0.5f) },
+		// TOP
+		{glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f)},
+		{glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, 0.5f)},
 
-		// BOTTOM                                                    
-		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(-0.5f, -0.5f, -0.5f),   glMath::vec3f(0.5f, -0.5f, -0.5f) },
-		{ glMath::vec3f(-0.5f, -0.5f, 0.5f),    glMath::vec3f(0.5f, -0.5f, -0.5f),    glMath::vec3f(0.5f, -0.5f, 0.5f) }
+		// BOTTOM
+		{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(-0.5f, -0.5f, -0.5f), glMath::vec3f(0.5f, -0.5f, -0.5f)},
+		{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(0.5f, -0.5f, -0.5f), glMath::vec3f(0.5f, -0.5f, 0.5f)},
+
+		// next triangle
+		// SOUTH
+		// {glMath::vec3f(-0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(-0.5f, 0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, 0.5f - 2.0f)},
+		// {glMath::vec3f(-0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, -0.5f, 0.5f - 2.0f)},
+
+		// // EAST
+		// {glMath::vec3f(0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, -0.5f - 2.0f)},
+		// {glMath::vec3f(0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, -0.5f, -0.5f - 2.0f)},
+
+		// // NORTH
+		// {glMath::vec3f(-0.5f, -0.5f, -0.5f - 2.0f), glMath::vec3f(-0.5f, 0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, -0.5f - 2.0f)},
+		// {glMath::vec3f(-0.5f, -0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, -0.5f, -0.5f - 2.0f)},
+
+		// // WEST
+		// {glMath::vec3f(-0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(-0.5f, 0.5f, 0.5f - 2.0f), glMath::vec3f(-0.5f, 0.5f, -0.5f - 2.0f)},
+		// {glMath::vec3f(-0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(-0.5f, 0.5f, -0.5f - 2.0f), glMath::vec3f(-0.5f, -0.5f, -0.5f - 2.0f)},
+
+		// // TOP
+		// {glMath::vec3f(-0.5f, 0.5f, 0.5f - 2.0f), glMath::vec3f(-0.5f, 0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, -0.5f - 2.0f)},
+		// {glMath::vec3f(-0.5f, 0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, 0.5f - 2.0f)},
+
+		// // BOTTOM
+		// {glMath::vec3f(-0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(-0.5f, -0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, -0.5f, -0.5f - 2.0f)},
+		// {glMath::vec3f(-0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, -0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, -0.5f, 0.5f - 2.0f)}
 
 	};
 
@@ -38,12 +66,12 @@ Cube::Cube(sf::RenderWindow& w): window(&w),model(glMath::mat4f(1.0f)),view(1.0f
 void Cube::drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, sf::Color color)
 {
 	// change to window coordinate first
-	p1.x = (p1.x+1) * 540;
-	p1.y = (p1.y-1) * -360;
-	p2.x = (p2.x+1) * 540;
-	p2.y = (p2.y-1) * -360;
-	p3.x = (p3.x+1) * 540;
-	p3.y = (p3.y-1) * -360;
+	p1.x = (p1.x + 1) * 540;
+	p1.y = (p1.y - 1) * -360;
+	p2.x = (p2.x + 1) * 540;
+	p2.y = (p2.y - 1) * -360;
+	p3.x = (p3.x + 1) * 540;
+	p3.y = (p3.y - 1) * -360;
 
 	// p1.x = (int)( ((p1.x+1) * 540) + 0.5 );
 	// p1.y = (int)( ((p1.y-1) * -360) + 0.5);
@@ -52,17 +80,20 @@ void Cube::drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, sf
 	// p3.x = (int)( ((p3.x+1) * 540) + 0.5)
 	// p3.y = (int)( ((p3.y-1) * -360) + 0.5);
 
-	if (first)
-	{
-		BLA(p1.x, p1.y, p2.x, p2.y, color);
-		BLA(p2.x, p2.y, p3.x, p3.y, color);
-	}
-	else
-	{
-		BLA(p2.x, p2.y, p3.x, p3.y, color);
-		BLA(p3.x, p3.y, p1.x, p1.y, color);
-	}
-	first = (first)? false:true;
+	BLA(p1.x, p1.y, p2.x, p2.y, color);
+	BLA(p2.x, p2.y, p3.x, p3.y, color);
+	BLA(p3.x, p3.y, p1.x, p1.y, color);
+	// if (first)
+	// {
+	// 	BLA(p1.x, p1.y, p2.x, p2.y, color);
+	// 	BLA(p2.x, p2.y, p3.x, p3.y, color);
+	// }
+	// else
+	// {
+	// 	BLA(p2.x, p2.y, p3.x, p3.y, color);
+	// 	BLA(p3.x, p3.y, p1.x, p1.y, color);
+	// }
+	first = (first) ? false : true;
 }
 
 void Cube::BLA(int x0, int y0, int xl, int yl, sf::Color color)
@@ -119,14 +150,14 @@ void Cube::render()
 	{
 		// fillTriangle(sf::Vector2f(i.p[0].x, i.p[0].y),
 		// 			sf::Vector2f(i.p[1].x, i.p[1].y),sf::Vector2f(i.p[2].x, i.p[2].y),sf::Color(255,255,255));
-		drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255,0,0));
+		drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
 	}
 }
 
 void Cube::translate(glMath::vec3f p)
 {
-	p.x = (float)(2*p.x)/constants::SCREEN_WIDTH;
-	p.y = (float)(2 * p.y)/constants::SCREEN_HEIGHT;
+	p.x = (float)(2 * p.x) / constants::SCREEN_WIDTH;
+	p.y = (float)(2 * p.y) / constants::SCREEN_HEIGHT;
 	// p.z = (p.y)/720.f;
 	// p1.x = (p1.x+1) * 540;
 	// p1.y = (p1.y-1) * -360;
@@ -145,8 +176,9 @@ void Cube::scale(glMath::vec3f p)
 	model = glMath::scale<float>(model, p);
 }
 
-void Cube::perspective(float fov,float sw,float sh,float nearZ,float farZ){
-	proj = glMath::perspective<float>(fov,sw,sh,nearZ,farZ);
+void Cube::perspective(float fov, float sw, float sh, float nearZ, float farZ)
+{
+	proj = glMath::perspective<float>(fov, sw, sh, nearZ, farZ);
 }
 
 void Cube::lookAt(glMath::vec3f from, glMath::vec3f to, glMath::vec3f temp)
@@ -160,9 +192,8 @@ void Cube::updateVertices()
 	meshCube.tris.clear();
 	for (auto i : local.tris)
 	{
-		glMath::trianglef t;
-		glMath::triangle4f triafterView;
-		int count = 0;
+		glMath::trianglef triafterView;
+
 		int k = 0;
 		for (auto j : i.p)
 		{
@@ -170,8 +201,12 @@ void Cube::updateVertices()
 			// glMath::vec3f v ((j.x + 1)*540, (j.y-1)*(-360), j.z);
 			// v =  proj*view*model * v;
 			v = view * model * v;
-			triafterView.p[k] = v; 
-			
+			// cout<<"------------VIEWWW--------"<<endl;
+			// cout<<v.x<<" "<<v.y<<" "<<v.z<<" "<<v.w<<endl;
+			// cout<<"------------VIEWWW END-------"<<endl;
+			// w will be 1
+			triafterView.p[k] = glMath::vec3f(v.x, v.y, v.z);
+
 			// v = proj * v;
 			// // perspective division
 			// if (v.w != 1 and v.w != 0)
@@ -186,13 +221,15 @@ void Cube::updateVertices()
 			k++;
 		}
 		int nClippedTriangles = 0;
-		glMath::triangle4f clipped[2];
+		glMath::trianglef clipped[2];
 		// the w component is 1 until it is projected by pers. matrix
 		// TODO: for now i put 1.0f in plane too.
-		nClippedTriangles = glMath::triangleNumClippedInPlane<float>({0.0f, 0.0f, 2.0f, 0.0f}, {0.0f, 0.0f, -1.0f, 0.0f}, triafterView, clipped[0], clipped[1]);
+		nClippedTriangles = glMath::triangleNumClippedInPlane<float>({0.0f, 0.0f, -5.0f}, {0.0f, 0.0f, -1.0f}, triafterView, clipped[0], clipped[1]);
 		// say looping in two triangles.
 		for (int m = 0; m < nClippedTriangles; m++)
 		{
+			glMath::trianglef t;
+			int count = 0;
 			// looping in each vertex of a  triangle
 			for (auto &j : clipped[m].p)
 			{
@@ -206,13 +243,14 @@ void Cube::updateVertices()
 					v.x /= v.w;
 					v.y /= v.w;
 					v.z /= v.w;
-					v.w = 1;
+					// v.w = 1;
 				}
 				t.p[count++] = glMath::vec3f(v.x, v.y, v.z);
 			}
+			meshCube.tris.push_back(t);
 		}
-		meshCube.tris.push_back(t);
 	}
+	cout << "SIZEOF MESH:" << meshCube.tris.size() << endl;
 }
 
 void Cube::toWindowCoord()
@@ -230,45 +268,45 @@ void Cube::toWindowCoord()
 
 void Cube::fillBottomFlatTriangle(sf::Vector2f v1, sf::Vector2f v2, sf::Vector2f v3, sf::Color color)
 {
-  float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
-  float invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
+	float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
+	float invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
 
-  float curx1 = v1.x;
-  float curx2 = v1.x;
+	float curx1 = v1.x;
+	float curx2 = v1.x;
 
-  for (int scanlineY = v1.y; scanlineY <= v2.y; scanlineY++)
-  {
-    // BLA((int)curx1, scanlineY, (int)curx2, scanlineY, 1);
-	scanLine((int)curx1, scanlineY, (int)curx2, scanlineY, color);
-    curx1 += invslope1;
-    curx2 += invslope2;
-  }
+	for (int scanlineY = v1.y; scanlineY <= v2.y; scanlineY++)
+	{
+		// BLA((int)curx1, scanlineY, (int)curx2, scanlineY, 1);
+		scanLine((int)curx1, scanlineY, (int)curx2, scanlineY, color);
+		curx1 += invslope1;
+		curx2 += invslope2;
+	}
 }
 
 void Cube::fillTopFlatTriangle(sf::Vector2f v1, sf::Vector2f v2, sf::Vector2f v3, sf::Color color)
 {
-  float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
-  float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
+	float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
+	float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
 
-  float curx1 = v3.x;
-  float curx2 = v3.x;
+	float curx1 = v3.x;
+	float curx2 = v3.x;
 
-  for (int scanlineY = v3.y; scanlineY > v1.y; scanlineY--)
-  {
-    // BLA((int)curx1, scanlineY, (int)curx2, scanlineY, 1);
-	scanLine((int)curx1, scanlineY, (int)curx2, scanlineY, color);
-    curx1 -= invslope1;
-    curx2 -= invslope2;
-  }
+	for (int scanlineY = v3.y; scanlineY > v1.y; scanlineY--)
+	{
+		// BLA((int)curx1, scanlineY, (int)curx2, scanlineY, 1);
+		scanLine((int)curx1, scanlineY, (int)curx2, scanlineY, color);
+		curx1 -= invslope1;
+		curx2 -= invslope2;
+	}
 }
 
 void Cube::scanLine(int x0, int y0, int x1, int y1, sf::Color color)
 {
 	int delx = std::fabs(x1 - x0);
-    int a = 0;
+	int a = 0;
 	a = ((x1 - x0) > 0) ? 1 : -1;
 
-	for(int i=0; i<= delx; i++)
+	for (int i = 0; i <= delx; i++)
 	{
 		putpixel(x0, y0, color);
 		x0 += a;
@@ -278,12 +316,12 @@ void Cube::scanLine(int x0, int y0, int x1, int y1, sf::Color color)
 void Cube::fillTriangle(sf::Vector2f vt1, sf::Vector2f vt2, sf::Vector2f vt3, sf::Color color)
 {
 
-	vt1.x = (vt1.x+1) * 540;
-	vt1.y = (vt1.y-1) * -360;
-	vt2.x = (vt2.x+1) * 540;
-	vt2.y = (vt2.y-1) * -360;
-	vt3.x = (vt3.x+1) * 540;
-	vt3.y = (vt3.y-1) * -360;
+	vt1.x = (vt1.x + 1) * 540;
+	vt1.y = (vt1.y - 1) * -360;
+	vt2.x = (vt2.x + 1) * 540;
+	vt2.y = (vt2.y - 1) * -360;
+	vt3.x = (vt3.x + 1) * 540;
+	vt3.y = (vt3.y - 1) * -360;
 
 	std::vector<sf::Vector2f> v;
 	v.push_back(vt1);
@@ -295,11 +333,11 @@ void Cube::fillTriangle(sf::Vector2f vt1, sf::Vector2f vt2, sf::Vector2f vt3, sf
 
 	for (unsigned int i = 0; i < v.size(); i++)
 	{
-		for (auto itj = v.begin(); itj != v.end()-1; itj = std::next(itj))
+		for (auto itj = v.begin(); itj != v.end() - 1; itj = std::next(itj))
 		{
 			if ((*itj).y > (*std::next(itj)).y)
 			{
-				std::swap(*itj, *std::next(itj)); 
+				std::swap(*itj, *std::next(itj));
 			}
 		}
 	}
@@ -316,15 +354,14 @@ void Cube::fillTriangle(sf::Vector2f vt1, sf::Vector2f vt2, sf::Vector2f vt3, sf
 	/* check for trivial case of top-flat triangle */
 	else if (vt1.y == vt2.y)
 	{
-		fillTopFlatTriangle( vt1, vt2, vt3, color);
+		fillTopFlatTriangle(vt1, vt2, vt3, color);
 	}
 	else
 	{
 		/* general case - split the triangle in a topflat and bottom-flat one */
 		sf::Vector2f v4 = sf::Vector2f(
-		(int)(vt1.x + ((float)(vt2.y - vt1.y) / (float)(vt3.y - vt1.y)) * (vt3.x - vt1.x)), vt2.y);
-		fillBottomFlatTriangle( vt1, vt2, v4, color);
-		fillTopFlatTriangle( vt2, v4, vt3, color);
+			(int)(vt1.x + ((float)(vt2.y - vt1.y) / (float)(vt3.y - vt1.y)) * (vt3.x - vt1.x)), vt2.y);
+		fillBottomFlatTriangle(vt1, vt2, v4, color);
+		fillTopFlatTriangle(vt2, v4, vt3, color);
 	}
-
 }

@@ -568,7 +568,7 @@ namespace glMath
         T val = tangent / aspectRatio;
         perspecMat[0][0] = val;
         perspecMat[1][1] = tangent;
-        perspecMat[2][2] = -(nearZ - farZ) / (nearZ - farZ);
+        perspecMat[2][2] = (-nearZ - farZ) / (nearZ - farZ);
         perspecMat[2][3] = (2 * nearZ * farZ) / (nearZ - farZ);
         perspecMat[3][2] = -1;
 
@@ -728,29 +728,29 @@ namespace glMath
 
     // // clipping parts:
     template<typename T>
-    vec4f linePlaneIntersection(vec4<T> &plane_p, vec4<T>  &plane_n, vec4<T> &lineStart, vec4<T> &lineEnd)
+    vec3f linePlaneIntersection(vec3<T> &plane_p, vec3<T>  &plane_n, vec3<T> &lineStart, vec3<T> &lineEnd)
     {
         plane_n = glMath::normalize(plane_n);
         float plane_d = -plane_n.dotProduct(plane_p);
         float ad = lineStart.dotProduct(plane_n);
         float bd = lineEnd.dotProduct(plane_n);
         float t = (-plane_d - ad) / (bd - ad);
-        vec4f lineStartToEnd = lineEnd - lineStart;
-        vec4f lineToIntersect = lineStartToEnd * t;
+        vec3f lineStartToEnd = lineEnd - lineStart;
+        vec3f lineToIntersect = lineStartToEnd * t;
         return lineStart + lineToIntersect;
     }
 
     // changed in in_tri definition for tri4f
     template<typename T>
-    int triangleNumClippedInPlane(vec4<T> plane_p, vec4<T> plane_n, triangle4<T> &in_tri, triangle4<T> &out_tri1, triangle4<T> &out_tri2)
+    int triangleNumClippedInPlane(vec3<T> plane_p, vec3<T> plane_n, triangle<T> &in_tri, triangle<T> &out_tri1, triangle<T> &out_tri2)
     {
         plane_n = glMath::normalize(plane_n);
 
         // Return signed shortest distance from point to plane, plane normal must be normalised
         // changed here for tri4f
-        auto dist = [&](vec4f &p)
+        auto dist = [&](vec3f &p)
         {
-            vec4f a = glMath::normalize(p);
+            vec3f a = glMath::normalize(p);
             // changed here for tri4f
             vec3f n = vec3f(a.x, a.y, a.z);
             return (plane_n.x * p.x + plane_n.y * p.y + plane_n.z * p.z - plane_n.dotProduct(plane_p));
@@ -758,9 +758,9 @@ namespace glMath
 
         // Create two temporary storage arrays to classify points either side of plane
         // If distance sign is positive, point lies on "inside" of plane
-        vec4f *inside_points[3];
+        vec3f *inside_points[3];
         int nInsidePointCount = 0;
-        vec4f *outside_points[3];
+        vec3f *outside_points[3];
         int nOutsidePointCount = 0;
 
         // Get signed distance of each point in triangle to plane
@@ -823,7 +823,7 @@ namespace glMath
             // out_tri1.sym = in_tri.sym;
 
             // The inside point is valid, so keep that...
-            out_tri1.p[0] = *inside_points[0];
+            out_tri1.p[0] = *(inside_points[0]);
 
             // but the two new points are at the locations where the
             // original sides of the triangle (lines) intersect with the plane
