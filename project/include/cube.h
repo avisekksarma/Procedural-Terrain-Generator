@@ -7,6 +7,7 @@
 #include <iostream>
 #include <math.h>
 #include "./zbuffer.h"
+#include <list>
 
 struct mesh
 {
@@ -26,6 +27,7 @@ public:
 	glMath::mat4f view;
 	glMath::mat4f proj;
 	ZBuffer zbuffer;
+	std::list<glMath::trianglef> listTriangles;
 
 	bool first;
 
@@ -44,6 +46,7 @@ public:
 	// void scale();
 	void updateVertices();
 	void toWindowCoord();
+	void clipAgainstPlanes();
 
 private:
 	void putpixel(float x, float y, sf::Color color);
