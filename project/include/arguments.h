@@ -1,7 +1,6 @@
 #pragma once
 #include "../include/glMath.h"
 
-
 struct persArgs
 {
     float fov;

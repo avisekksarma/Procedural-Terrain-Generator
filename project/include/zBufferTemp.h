@@ -31,7 +31,6 @@ public:
 		const int nDepths = width * height;
 		for( int i = 0; i < nDepths; i++ )
 		{
-			// pBuffer[i] = std::numeric_limits<float>::infinity();
 			pBuffer[i] = std::numeric_limits<float>::infinity();
 		}
 	}

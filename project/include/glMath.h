@@ -551,6 +551,7 @@ namespace glMath
         scaleMat[2][2] = v.z;
         return (scaleMat * m);
     }
+
     template <typename T>
     mat4<T> perspective(T fov, float screenWidth, float screenHeight, T nearZ, T farZ)
     {
@@ -653,67 +654,6 @@ namespace glMath
     }
 
     typedef mat4<float> mat4f;
-
-    // template <typename T>
-    // void mouseMovement(bool &fM, T &yaw, T &pitch, T &lastX, T &lastY, T xPosIn, T yPosIn)
-    // {
-    //     // TODO:  hide the cursor and capture mouse/cursor.
-    //     // TODO: in processevent loop call these functions when needed.
-    //     // maybe initialize yaw,pitch values before using
-    //     // bool firstMouse = true;
-    //     // float yaw = -90.0f;
-    //     // float pitch = 0.0f;
-    //     // float lastX = 800.0f / 2.0;
-    //     // float lastY = 600.0 / 2.0;
-    //     // also cameraFront
-
-    //     // for camera i can have like this initially
-    //     // camera
-    //     // glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-    //     // glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-    //     // glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-    //     float xpos = xposIn;
-    //     float ypos = yposIn;
-
-    //     if (firstMouse)
-    //     {
-    //         lastX = xpos;
-    //         lastY = ypos;
-    //         firstMouse = false;
-    //     }
-
-    //     float xoffset = xpos - lastX;
-    //     float yoffset = ypos - lastY;
-    //     lastX = xpos;
-    //     lastY = ypos;
-
-    //     float sensitivity = 0.1f;
-    //     xoffset *= sensitivity;
-    //     yoffset *= sensitivity;
-
-    //     yaw += xoffset;
-    //     pitch += yoffset;
-
-    //     if (pitch > 89.0f)
-    //         pitch = 89.0f;
-    //     if (pitch < -89.0f)
-    //         pitch = -89.0f;
-
-    //     glMath::vec3f front;
-    //     front.x = cos(glMath::degToRadians(yaw)) * cos(glMath::degToRadians(pitch));
-    //     front.y = sin(glMath::degToRadians(pitch));
-    //     front.z = sin(glMath::degToRadians(yaw)) * cos(glMath::degToRadians(pitch));
-    //     cameraFront = glMath::normalize(front);
-    // }
-    // template <typename T>
-    // void scrollMovement(T xoffset, T yoffset, T &fov)
-    // {
-    //     fov -= (float)yoffset;
-    //     if (fov < 1.0f)
-    //         fov = 1.0f;
-    //     if (fov > 45.0f)
-    //         fov = 45.0f;
-    // }
 
     // // clipping parts:
     template<typename T>

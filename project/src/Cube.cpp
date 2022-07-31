@@ -181,27 +181,9 @@ void Cube::render()
 	for (auto &i : listTriangles)
 	{
 
-		// fillTriangle(sf::Vector2f(i.p[0].x, i.p[0].y),
-		// 			sf::Vector2f(i.p[1].x, i.p[1].y),sf::Vector2f(i.p[2].x, i.p[2].y),sf::Color(255,255,255));
 		// drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
 		fillTriangle(i.p[0], i.p[1], i.p[2], colors[count++]);
 	}
-	// int count =0;
-	// for (auto &i : meshCube.tris)
-	// {
-	// 	// fillTriangle(sf::Vector2f(i.p[0].x, i.p[0].y),
-	// 	// 			 sf::Vector2f(i.p[1].x, i.p[1].y), sf::Vector2f(i.p[2].x, i.p[2].y), sf::Color(255, 255, 255));
-	// 	// drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255,0,0));
-	// 	fillTriangle(i.p[0], i.p[1], i.p[2], colors[count]);
-	// 	count++;
-	// }
-
-	// for (auto &i : listTriangles)
-	// {
-	// 	// fillTriangle(sf::Vector2f(i.p[0].x, i.p[0].y),
-	// 	// 			sf::Vector2f(i.p[1].x, i.p[1].y),sf::Vector2f(i.p[2].x, i.p[2].y),sf::Color(255,255,255));
-	// 	drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
-	// }
 }
 
 void Cube::translate(glMath::vec3f p)
@@ -251,26 +233,12 @@ void Cube::updateVertices()
 		for (auto j : i.p)
 		{
 			glMath::vec4f v(j.x, j.y, j.z, 1);
-			// glMath::vec3f v ((j.x + 1)*540, (j.y-1)*(-360), j.z);
-			// v =  proj*view*model * v;
 			v = view * model * v;
 			// cout<<"------------VIEWWW--------"<<endl;
 			// cout<<v.x<<" "<<v.y<<" "<<v.z<<" "<<v.w<<endl;
 			// cout<<"------------VIEWWW END-------"<<endl;
 			// w will be 1
 			triafterView.p[k] = glMath::vec3f(v.x, v.y, v.z);
-
-			// v = proj * v;
-			// // perspective division
-			// if (v.w != 1 and v.w != 0)
-			// {
-			// 	v.x /= v.w;
-			// 	v.y /= v.w;
-			// 	v.z /= v.w;
-			// 	v.w = 1;
-			// 	cout << v.x << " " << v.y << " " << v.z << endl;
-			// }
-			// t.p[count++] = glMath::vec3f(v.x, v.y, v.z);
 			k++;
 		}
 		int nClippedTriangles = 0;
@@ -436,13 +404,15 @@ void Cube::scanLine(int x0, int y0, int x1, int y1, sf::Color color)
 	int delx = std::fabs(x1 - x0);
 	int a = 0;
 	a = ((x1 - x0) > 0) ? 1 : -1;
+	float z ;
 	for (int i = 0; i <= delx; i++)
 	{
-		float z = zbuffer.returnZ(x0,y0);
+		z = zbuffer.returnZ(x0,y0);
 		if(zbuffer.TestAndSet(x0,y0,z))
 		{
 			putpixel(x0, y0, color);
 		}
+		// z = z - (zbuffer.plane.A / zbuffer.plane.C);
 		x0 += a;
 	}
 }
@@ -450,20 +420,6 @@ void Cube::scanLine(int x0, int y0, int x1, int y1, sf::Color color)
 void Cube::fillTriangle(glMath::vec3f vt1, glMath::vec3f vt2, glMath::vec3f vt3, sf::Color color)
 {
 	// zbuffer.makePlaneEquation({1,2,-2},{3,-2,1},{5,1,-4});
-	// vt1.x = (vt1.x+1) * 540;
-	// vt1.y = (vt1.y-1) * -360;
-	// vt2.x = (vt2.x+1) * 540;
-	// vt2.y = (vt2.y-1) * -360;
-	// vt3.x = (vt3.x+1) * 540;
-	// vt3.y = (vt3.y-1) * -360;
-
-	// vt1.x = (int)(((vt1.x + 1) * 540) + 0.5);
-	// vt1.y = (int)(((vt1.y - 1) * -360) + 0.5);
-	// vt2.x = (int)(((vt2.x + 1) * 540) + 0.5);
-	// vt2.y = (int)(((vt2.y - 1) * -360) + 0.5);
-	// vt3.x = (int)(((vt3.x + 1) * 540) + 0.5);
-	// vt3.y = (int)(((vt3.y - 1) * -360) + 0.5);
-
 	zbuffer.makePlaneEquation(vt1, vt2, vt3);
 	std::vector<glMath::vec3f> v;
 	v.push_back(vt1);

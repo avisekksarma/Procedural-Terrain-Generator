@@ -1,9 +1,9 @@
-#pragma once
-#include <unordered_map>
-#include <utility>
-#include <string>
-#include <./glMath.h>
-#include <iostream>
+// #pragma once
+// #include <unordered_map>
+// #include <utility>
+// #include <string>
+// #include <./glMath.h>
+// #include <iostream>
 
 // class ZBuffer
 // {
