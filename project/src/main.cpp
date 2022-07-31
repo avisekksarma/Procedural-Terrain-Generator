@@ -7,7 +7,7 @@
 
 void checkCameraMovement(cameraArgs &cargs)
 {
-    float camSpeed = 0.01f;
+    float camSpeed = 0.1f;
     glMath::vec3f yComp(0.0,2.0f,0.0f);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {
@@ -95,9 +95,10 @@ int main()
     //  initialize here
     // -----------------------------
     cameraArgs cargs(glMath::vec3f(0.0f, 0.0f, 3.0f), glMath::vec3f(0.0f, 0.0f, -3.0f), glMath::vec3f(0.0f, 1.0f, 0.0f));
-    persArgs pargs(45.0f, constants::SCREEN_WIDTH, constants::SCREEN_HEIGHT, 0.1f, 100.0f);
+    persArgs pargs(45.0f, constants::SCREEN_WIDTH, constants::SCREEN_HEIGHT, -0.1f, -100.0f);
     mouseArgs margs(true, -90.f, 0.0f, (constants::SCREEN_WIDTH/2.0f), (constants::SCREEN_HEIGHT/2.0f));
     Cube cube(window);
+    Cube cube2(window);
     sf::Clock clock; // starts the clock
 
     while (window.isOpen())
@@ -109,9 +110,12 @@ int main()
         // -----------------------------
         // change model matrix here
         // -----------------------------
-        cube.scale(glMath::vec3f(0.5, 0.5, 0.5));
-        cube.translate(glMath::vec3f(140.0f, 0.0, -2.0f));
+        // cube.scale(glMath::vec3f(0.5, 0.5, 0.5));
+        // cube.translate(glMath::vec3f(140.0f, 0.0, -2.0f));
 
+        // cube.scale(glMath::vec3f(0.5, 0.5, 0.5));
+        cube.translate(glMath::vec3f(140.0f,0.0,-5.0f));
+        cube2.translate(glMath::vec3f(-140.0f,0.0,-5.0f));
         // -----------------------------
         // change view matrix here
         // -----------------------------
@@ -125,6 +129,7 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
+
             // check the type of the event...
             switch (event.type)
             {
