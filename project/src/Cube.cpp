@@ -5,7 +5,7 @@
 #include <iostream>
 using namespace std;
 
-Cube::Cube(sf::RenderWindow &w) : window(&w), model(glMath::mat4f(1.0f)), view(1.0f), proj(1.0f)
+Cube::Cube(sf::RenderWindow &w) : window(&w), model(glMath::mat4f(1.0f)), view(1.0f), proj(1.0f),zbuffer(constants::SCREEN_WIDTH, constants::SCREEN_HEIGHT)
 {
 
 	local.tris = {
@@ -59,6 +59,7 @@ Cube::Cube(sf::RenderWindow &w) : window(&w), model(glMath::mat4f(1.0f)), view(1
 		// {glMath::vec3f(-0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, -0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, -0.5f, 0.5f - 2.0f)}
 
 	};
+
 
 	// color = sf::Color(255,255,255);
 	first = true;
@@ -156,7 +157,7 @@ void Cube::putpixel(float x, float y, sf::Color color)
 
 void Cube::render()
 {
-	// zbuffer.depth.clear();
+	int count = 0;
 	sf::Color colors[12] = {
 		// red
 		sf::Color(255, 0, 0),
@@ -167,10 +168,13 @@ void Cube::render()
 		// blue
 		sf::Color(0, 0, 255),
 		sf::Color(0, 0, 255),
+
 		sf::Color(255, 255, 0),
 		sf::Color(255, 255, 0),
+
 		sf::Color(0, 255, 255),
 		sf::Color(0, 255, 255),
+
 		sf::Color(255, 0, 255),
 		sf::Color(255, 0, 255),
 	};
@@ -180,7 +184,7 @@ void Cube::render()
 		// fillTriangle(sf::Vector2f(i.p[0].x, i.p[0].y),
 		// 			sf::Vector2f(i.p[1].x, i.p[1].y),sf::Vector2f(i.p[2].x, i.p[2].y),sf::Color(255,255,255));
 		// drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
-		fillTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
+		fillTriangle(i.p[0], i.p[1], i.p[2], colors[count++]);
 	}
 	// int count =0;
 	// for (auto &i : meshCube.tris)
@@ -237,6 +241,7 @@ void Cube::updateVertices()
 {
 	meshCube.tris.clear();
 	listTriangles.clear();
+	zbuffer.Clear();
 
 	for (auto i : local.tris)
 	{
@@ -388,8 +393,10 @@ void Cube::toWindowCoord()
 
 void Cube::fillBottomFlatTriangle(glMath::vec3f v1, glMath::vec3f v2, glMath::vec3f v3, sf::Color color)
 {
-	float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
-	float invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
+	float invslope1 = (float)(v2.x - v1.x) / (v2.y - v1.y);
+	float invslope2 = (float)(v3.x - v1.x) / (v3.y - v1.y);
+
+	// float avgZ = (v1.z+v2.z+v3.z)/3.f;
 
 	float curx1 = v1.x;
 	float curx2 = v1.x;
@@ -397,6 +404,7 @@ void Cube::fillBottomFlatTriangle(glMath::vec3f v1, glMath::vec3f v2, glMath::ve
 	for (int scanlineY = v1.y; scanlineY <= v2.y; scanlineY++)
 	{
 		// BLA((int)curx1, scanlineY, (int)curx2, scanlineY, 1);
+		// scanLine((int)curx1, scanlineY, (int)curx2, scanlineY, avgZ, color);
 		scanLine((int)curx1, scanlineY, (int)curx2, scanlineY, color);
 		curx1 += invslope1;
 		curx2 += invslope2;
@@ -408,12 +416,15 @@ void Cube::fillTopFlatTriangle(glMath::vec3f v1, glMath::vec3f v2, glMath::vec3f
 	float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
 	float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
 
+	// float avgZ = (v1.z+v2.z+v3.z)/3.f;
+
 	float curx1 = v3.x;
 	float curx2 = v3.x;
 
 	for (int scanlineY = v3.y; scanlineY > v1.y; scanlineY--)
 	{
 		// BLA((int)curx1, scanlineY, (int)curx2, scanlineY, 1);
+		// scanLine((int)curx1, scanlineY, (int)curx2, scanlineY, avgZ, color);
 		scanLine((int)curx1, scanlineY, (int)curx2, scanlineY, color);
 		curx1 -= invslope1;
 		curx2 -= invslope2;
@@ -425,11 +436,13 @@ void Cube::scanLine(int x0, int y0, int x1, int y1, sf::Color color)
 	int delx = std::fabs(x1 - x0);
 	int a = 0;
 	a = ((x1 - x0) > 0) ? 1 : -1;
-
 	for (int i = 0; i <= delx; i++)
 	{
-		// if (zbuffer.updateDepth(x0, y0, ))
-		putpixel(x0, y0, color);
+		float z = zbuffer.returnZ(x0,y0);
+		if(zbuffer.TestAndSet(x0,y0,z))
+		{
+			putpixel(x0, y0, color);
+		}
 		x0 += a;
 	}
 }
@@ -451,7 +464,7 @@ void Cube::fillTriangle(glMath::vec3f vt1, glMath::vec3f vt2, glMath::vec3f vt3,
 	// vt3.x = (int)(((vt3.x + 1) * 540) + 0.5);
 	// vt3.y = (int)(((vt3.y - 1) * -360) + 0.5);
 
-	// zbuffer.makePlaneEquation(vt1, vt2, vt3);
+	zbuffer.makePlaneEquation(vt1, vt2, vt3);
 	std::vector<glMath::vec3f> v;
 	v.push_back(vt1);
 	v.push_back(vt2);

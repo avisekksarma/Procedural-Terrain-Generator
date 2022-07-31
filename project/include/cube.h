@@ -7,6 +7,8 @@
 #include <iostream>
 #include <math.h>
 #include "./zbuffer.h"
+#include "./zBufferTemp.h"
+
 #include <list>
 
 struct mesh
@@ -57,5 +59,6 @@ private:
 	// void fillBottomFlatTriangle(sf::Vector2f v1, sf::Vector2f v2, sf::Vector2f 
 	// v3, sf::Color color);
 	void fillTopFlatTriangle(glMath::vec3f v1, glMath::vec3f v2, glMath::vec3f v3, sf::Color color);
+	// void scanLine(int x0, int x1, int y0, int y1m, float z, sf::Color color);
 	void scanLine(int x0, int x1, int y0, int y1m, sf::Color color);
 };
