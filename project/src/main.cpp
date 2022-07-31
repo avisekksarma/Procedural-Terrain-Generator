@@ -7,7 +7,7 @@
 
 void checkCameraMovement(cameraArgs &cargs)
 {
-    float camSpeed = 0.01f;
+    float camSpeed = 0.1f;
     glMath::vec3f yComp(0.0,2.0f,0.0f);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {

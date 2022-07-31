@@ -36,10 +36,10 @@ public:
         auto it = depth.find({x, y});
         if (it != depth.end())
         {
-            std::cout << "--------it--------" << std::endl;
-            std::cout << it->first.first << " " << it->first.second << std::endl;
-            std::cout << it->second << " " << z << std::endl;
-            std::cout << "--------it end --------" << std::endl;
+            // std::cout << "--------it--------" << std::endl;
+            // std::cout << it->first.first << " " << it->first.second << std::endl;
+            // std::cout << it->second << " " << z << std::endl;
+            // std::cout << "--------it end --------" << std::endl;
         }
         if (it == depth.end())
         {

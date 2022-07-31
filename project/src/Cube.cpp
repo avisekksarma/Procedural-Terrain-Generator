@@ -125,12 +125,31 @@ void Cube::putpixel(float x, float y, sf::Color color)
 void Cube::render()
 {
 	zbuffer.depth.clear();
+	sf::Color colors[12] = {
+		// red
+		sf::Color(255, 0, 0),
+		sf::Color(255, 0, 0),
+		// green
+		sf::Color(0, 255, 0),
+		sf::Color(0, 255, 0),
+		// blue
+		sf::Color(0, 0, 255),
+		sf::Color(0, 0, 255),
+		sf::Color(255, 255, 0),
+		sf::Color(255, 255, 0),
+		sf::Color(0, 255, 255),
+		sf::Color(0, 255, 255),
+		sf::Color(255, 0, 255),
+		sf::Color(255, 0, 255),
+	};
+	int count =0;
 	for (auto &i : meshCube.tris)
 	{
 		// fillTriangle(sf::Vector2f(i.p[0].x, i.p[0].y),
 		// 			 sf::Vector2f(i.p[1].x, i.p[1].y), sf::Vector2f(i.p[2].x, i.p[2].y), sf::Color(255, 255, 255));
 		// drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255,0,0));
-		fillTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 255, 255));
+		fillTriangle(i.p[0], i.p[1], i.p[2], colors[count]);
+		count++;
 	}
 }
 
