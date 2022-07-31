@@ -6,6 +6,7 @@
 #include "../include/glMath.h"
 #include <iostream>
 #include <math.h>
+#include <list>
 
 struct mesh
 {
@@ -18,17 +19,18 @@ class Cube
 public:
 	Cube(sf::RenderWindow &w);
 	sf::RenderWindow *window;
-	mesh meshCube;	// copy
-	mesh local;	// actual
+	mesh meshCube; // copy
+	mesh local;	   // actual
 
 	glMath::mat4f model;
 	glMath::mat4f view;
 	glMath::mat4f proj;
+	std::list<glMath::trianglef> listTriangles;
 
 	bool first;
 
 public:
-	void drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3,  sf::Color color);
+	void drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, sf::Color color);
 	void fillTriangle(sf::Vector2f vt1, sf::Vector2f vt2, sf::Vector2f vt3, sf::Color color);
 	void render();
 	// void setVertex();
@@ -40,6 +42,7 @@ public:
 	// void scale();
 	void updateVertices();
 	void toWindowCoord();
+	void clipAgainstPlanes();
 
 private:
 	void putpixel(float x, float y, sf::Color color);

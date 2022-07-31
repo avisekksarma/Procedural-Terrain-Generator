@@ -1,6 +1,7 @@
 #include "../include/cube.h"
 #include "../include/glMath.h"
 #include "../include/constants.h"
+#include <list>
 #include <iostream>
 using namespace std;
 
@@ -73,12 +74,14 @@ void Cube::drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, sf
 	// p3.x = (p3.x+1) * 540;
 	// p3.y = (p3.y-1) * -360;
 
-	p1.x = (int)( ((p1.x+1) * 540) + 0.5 );
-	p1.y = (int)( ((p1.y-1) * -360) + 0.5);
-	p2.x = (int)( ((p2.x+1) * 540) + 0.5);
-	p2.y = (int)( ((p2.y-1) * -360) + 0.5);
-	p3.x = (int)( ((p3.x+1) * 540) + 0.5);
-	p3.y = (int)( ((p3.y-1) * -360) + 0.5);
+	// transforming projected coordinates to window coordinates
+	// changed here (commented out)
+	// p1.x = (int)(((p1.x + 1) * 540) + 0.5);
+	// p1.y = (int)(((p1.y - 1) * -360) + 0.5);
+	// p2.x = (int)(((p2.x + 1) * 540) + 0.5);
+	// p2.y = (int)(((p2.y - 1) * -360) + 0.5);
+	// p3.x = (int)(((p3.x + 1) * 540) + 0.5);
+	// p3.y = (int)(((p3.y - 1) * -360) + 0.5);
 
 	BLA(p1.x, p1.y, p2.x, p2.y, color);
 	BLA(p2.x, p2.y, p3.x, p3.y, color);
@@ -146,12 +149,18 @@ void Cube::putpixel(float x, float y, sf::Color color)
 
 void Cube::render()
 {
-	for (auto &i : meshCube.tris)
-	{
-		// fillTriangle(sf::Vector2f(i.p[0].x, i.p[0].y),
-		// 			sf::Vector2f(i.p[1].x, i.p[1].y),sf::Vector2f(i.p[2].x, i.p[2].y),sf::Color(255,255,255));
-		drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
-	}
+	// for (auto &i : meshCube.tris)
+	// {
+	// 	// fillTriangle(sf::Vector2f(i.p[0].x, i.p[0].y),
+	// 	// 			sf::Vector2f(i.p[1].x, i.p[1].y),sf::Vector2f(i.p[2].x, i.p[2].y),sf::Color(255,255,255));
+	// 	drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
+	// }
+	// for (auto &i : listTriangles)
+	// {
+	// 	// fillTriangle(sf::Vector2f(i.p[0].x, i.p[0].y),
+	// 	// 			sf::Vector2f(i.p[1].x, i.p[1].y),sf::Vector2f(i.p[2].x, i.p[2].y),sf::Color(255,255,255));
+	// 	drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
+	// }
 }
 
 void Cube::translate(glMath::vec3f p)
@@ -245,14 +254,89 @@ void Cube::updateVertices()
 					v.z /= v.w;
 					// v.w = 1;
 				}
+
 				t.p[count++] = glMath::vec3f(v.x, v.y, v.z);
 			}
+			t.p[0].x = (int)(((t.p[0].x + 1) * 540) + 0.5);
+			t.p[0].y = (int)(((t.p[0].y - 1) * -360) + 0.5);
+			t.p[1].x = (int)(((t.p[1].x + 1) * 540) + 0.5);
+			t.p[1].y = (int)(((t.p[1].y - 1) * -360) + 0.5);
+			t.p[2].x = (int)(((t.p[2].x + 1) * 540) + 0.5);
+			t.p[2].y = (int)(((t.p[2].y - 1) * -360) + 0.5);
 			meshCube.tris.push_back(t);
 		}
 	}
-	cout << "SIZEOF MESH:" << meshCube.tris.size() << endl;
+	cout << "SIZEOF MESH before clipping:" << meshCube.tris.size() << endl;
+	clipAgainstPlanes();
+	cout << "SIZEOF MESH after clipping:" << meshCube.tris.size() << endl;
 }
 
+void Cube::clipAgainstPlanes()
+{
+	int countOfTriangles = 0;
+	for (auto &triToRaster : meshCube.tris)
+	{
+		// Clip triangles against all four screen edges, this could yield
+		// a bunch of triangles, so create a queue that we traverse to
+		//  ensure we only test new triangles generated against planes
+		glMath::trianglef clipped[2];
+		// listTriangles;
+		listTriangles.clear();
+
+		// Add initial triangle
+		listTriangles.push_back(triToRaster);
+		int nNewTriangles = 1;
+
+		for (int p = 0; p < 4; p++)
+		{
+			int nTrisToAdd = 0;
+			while (nNewTriangles > 0)
+			{
+				// Take triangle from front of queue
+				glMath::trianglef test = listTriangles.front();
+				listTriangles.pop_front();
+				nNewTriangles--;
+
+				// Clip it against a plane. We only need to test each
+				// subsequent plane, against subsequent new triangles
+				// as all triangles after a plane clip are guaranteed
+				// to lie on the inside of the plane. I like how this
+				// comment is almost completely and utterly justified
+				switch (p)
+				{
+				case 0:
+					nTrisToAdd = glMath::triangleNumClippedInPlane({0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, test, clipped[0], clipped[1]);
+					break;
+				case 1:
+					nTrisToAdd = glMath::triangleNumClippedInPlane({0.0f, (float)(constants::SCREEN_HEIGHT)-1, 0.0f}, {0.0f, -1.0f, 0.0f}, test, clipped[0], clipped[1]);
+					break;
+				case 2:
+					nTrisToAdd = glMath::triangleNumClippedInPlane({0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, test, clipped[0], clipped[1]);
+					break;
+				case 3:
+					nTrisToAdd = glMath::triangleNumClippedInPlane({(float)(constants::SCREEN_WIDTH)-1, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, test, clipped[0], clipped[1]);
+					break;
+				}
+
+				// Clipping may yield a variable number of triangles, so
+				// add these new ones to the back of the queue for subsequent
+				// clipping against next planes
+				for (int w = 0; w < nTrisToAdd; w++)
+					listTriangles.push_back(clipped[w]);
+			}
+			nNewTriangles = listTriangles.size();
+		}
+		countOfTriangles += listTriangles.size();
+		for (auto &i : listTriangles)
+		{
+
+			// fillTriangle(sf::Vector2f(i.p[0].x, i.p[0].y),
+			// 			sf::Vector2f(i.p[1].x, i.p[1].y),sf::Vector2f(i.p[2].x, i.p[2].y),sf::Color(255,255,255));
+			drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
+		}
+	}
+	cout << "SIZEOF MESH after the screen clipping:" << countOfTriangles << endl;
+}
 void Cube::toWindowCoord()
 {
 	for (auto &i : meshCube.tris)
@@ -323,12 +407,12 @@ void Cube::fillTriangle(sf::Vector2f vt1, sf::Vector2f vt2, sf::Vector2f vt3, sf
 	// vt3.x = (vt3.x+1) * 540;
 	// vt3.y = (vt3.y-1) * -360;
 
-	vt1.x = (int)( ((vt1.x+1) * 540) + 0.5 );
-	vt1.y = (int)( ((vt1.y-1) * -360) + 0.5);
-	vt2.x = (int)( ((vt2.x+1) * 540) + 0.5);
-	vt2.y = (int)( ((vt2.y-1) * -360) + 0.5);
-	vt3.x = (int)( ((vt3.x+1) * 540) + 0.5);
-	vt3.y = (int)( ((vt3.y-1) * -360) + 0.5);
+	vt1.x = (int)(((vt1.x + 1) * 540) + 0.5);
+	vt1.y = (int)(((vt1.y - 1) * -360) + 0.5);
+	vt2.x = (int)(((vt2.x + 1) * 540) + 0.5);
+	vt2.y = (int)(((vt2.y - 1) * -360) + 0.5);
+	vt3.x = (int)(((vt3.x + 1) * 540) + 0.5);
+	vt3.y = (int)(((vt3.y - 1) * -360) + 0.5);
 
 	std::vector<sf::Vector2f> v;
 	v.push_back(vt1);
