@@ -66,19 +66,19 @@ Cube::Cube(sf::RenderWindow &w) : window(&w), model(glMath::mat4f(1.0f)), view(1
 void Cube::drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, sf::Color color)
 {
 	// change to window coordinate first
-	p1.x = (p1.x + 1) * 540;
-	p1.y = (p1.y - 1) * -360;
-	p2.x = (p2.x + 1) * 540;
-	p2.y = (p2.y - 1) * -360;
-	p3.x = (p3.x + 1) * 540;
-	p3.y = (p3.y - 1) * -360;
+	// p1.x = (p1.x+1) * 540;
+	// p1.y = (p1.y-1) * -360;
+	// p2.x = (p2.x+1) * 540;
+	// p2.y = (p2.y-1) * -360;
+	// p3.x = (p3.x+1) * 540;
+	// p3.y = (p3.y-1) * -360;
 
-	// p1.x = (int)( ((p1.x+1) * 540) + 0.5 );
-	// p1.y = (int)( ((p1.y-1) * -360) + 0.5);
-	// p2.x = (int)( ((p2.x+1) * 540) + 0.5)
-	// p2.y = (int)( ((p2.y-1) * -360) + 0.5);
-	// p3.x = (int)( ((p3.x+1) * 540) + 0.5)
-	// p3.y = (int)( ((p3.y-1) * -360) + 0.5);
+	p1.x = (int)( ((p1.x+1) * 540) + 0.5 );
+	p1.y = (int)( ((p1.y-1) * -360) + 0.5);
+	p2.x = (int)( ((p2.x+1) * 540) + 0.5);
+	p2.y = (int)( ((p2.y-1) * -360) + 0.5);
+	p3.x = (int)( ((p3.x+1) * 540) + 0.5);
+	p3.y = (int)( ((p3.y-1) * -360) + 0.5);
 
 	BLA(p1.x, p1.y, p2.x, p2.y, color);
 	BLA(p2.x, p2.y, p3.x, p3.y, color);
@@ -316,12 +316,19 @@ void Cube::scanLine(int x0, int y0, int x1, int y1, sf::Color color)
 void Cube::fillTriangle(sf::Vector2f vt1, sf::Vector2f vt2, sf::Vector2f vt3, sf::Color color)
 {
 
-	vt1.x = (vt1.x + 1) * 540;
-	vt1.y = (vt1.y - 1) * -360;
-	vt2.x = (vt2.x + 1) * 540;
-	vt2.y = (vt2.y - 1) * -360;
-	vt3.x = (vt3.x + 1) * 540;
-	vt3.y = (vt3.y - 1) * -360;
+	// vt1.x = (vt1.x+1) * 540;
+	// vt1.y = (vt1.y-1) * -360;
+	// vt2.x = (vt2.x+1) * 540;
+	// vt2.y = (vt2.y-1) * -360;
+	// vt3.x = (vt3.x+1) * 540;
+	// vt3.y = (vt3.y-1) * -360;
+
+	vt1.x = (int)( ((vt1.x+1) * 540) + 0.5 );
+	vt1.y = (int)( ((vt1.y-1) * -360) + 0.5);
+	vt2.x = (int)( ((vt2.x+1) * 540) + 0.5);
+	vt2.y = (int)( ((vt2.y-1) * -360) + 0.5);
+	vt3.x = (int)( ((vt3.x+1) * 540) + 0.5);
+	vt3.y = (int)( ((vt3.y-1) * -360) + 0.5);
 
 	std::vector<sf::Vector2f> v;
 	v.push_back(vt1);
