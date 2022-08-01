@@ -1,7 +1,8 @@
 #pragma once
 #include <math.h>
 #define PIE 3.141592653589793238
-
+#include <iostream>
+#include "./constants.h"
 namespace glMath
 {
 
@@ -101,9 +102,22 @@ namespace glMath
     template <typename T>
     struct triangle
     {
+    public:
         glMath::vec3<T> p[3];
+
+    public:
+        friend std::ostream &operator<<(std::ostream &s, const triangle<T> &v)
+        {
+            s << "-----triangle----" << std::endl;
+            s << '(' << v.p[0].x << ',' << v.p[0].y << ',' << v.p[0].z << ')';
+            s << '(' << v.p[1].x << ',' << v.p[1].y << ',' << v.p[1].z << ')';
+            s << '(' << v.p[2].x << ',' << v.p[2].y << ',' << v.p[2].z << ')';
+            s << "\n-----triangle end----" << std::endl
+              << std::endl;
+            return s;
+        }
     };
-    
+
     typedef triangle<float> trianglef;
 
     template <typename T>
@@ -157,7 +171,7 @@ namespace glMath
         vec4 operator*(const vec4 &v) const
         {
             return vec4(x + v.x, y + v.y, z + v.z, w + v.w);
-        } 
+        }
 
         vec4 &operator+=(const vec4 &v)
         {
@@ -649,15 +663,15 @@ namespace glMath
         Result[2][3] = -from.z;
 
         Result[3][3] = 1;
-        
+
         return Result;
     }
 
     typedef mat4<float> mat4f;
 
     // // clipping parts:
-    template<typename T>
-    vec3f linePlaneIntersection(vec3<T> &plane_p, vec3<T>  &plane_n, vec3<T> &lineStart, vec3<T> &lineEnd)
+    template <typename T>
+    vec3f linePlaneIntersection(vec3<T> &plane_p, vec3<T> &plane_n, vec3<T> &lineStart, vec3<T> &lineEnd)
     {
         plane_n = glMath::normalize(plane_n);
         float plane_d = -plane_n.dotProduct(plane_p);
@@ -670,7 +684,7 @@ namespace glMath
     }
 
     // changed in in_tri definition for tri4f
-    template<typename T>
+    template <typename T>
     int triangleNumClippedInPlane(vec3<T> plane_p, vec3<T> plane_n, triangle<T> &in_tri, triangle<T> &out_tri1, triangle<T> &out_tri2)
     {
         plane_n = glMath::normalize(plane_n);
@@ -790,9 +804,36 @@ namespace glMath
             out_tri2.p[2] = linePlaneIntersection<float>(plane_p, plane_n, *inside_points[1], *outside_points[0]);
 
             return 2; // Return two newly formed triangles which form a quad
-        }else{
+        }
+        else
+        {
             return -1;
         }
     }
 
+    // convert from window coordinates to local(ndc)
+    template <typename T>
+    vec3<T> returnLocalCoords(vec3<T> windowCoords)
+    {
+        // t.p[0].x = (int)(((t.p[0].x + 1) * 540) + 0.5);
+        // t.p[0].y = (int)(((t.p[0].y - 1) * -360) + 0.5);
+        // t.p[1].x = (int)(((t.p[1].x + 1) * 540) + 0.5);
+        // t.p[1].y = (int)(((t.p[1].y - 1) * -360) + 0.5);
+        // t.p[2].x = (int)(((t.p[2].x + 1) * 540) + 0.5);
+        // t.p[2].y = (int)(((t.p[2].y - 1) * -360) + 0.5);
+
+        glMath::vec3<T> localcoords;
+        // if (debug)
+        // {
+        //     std::cout << windowCoords.x << ",," << windowCoords.y << std::endl;
+        // }
+        localcoords.x = 2.0f * windowCoords.x / constants::SCREEN_WIDTH - 1;
+        localcoords.y = -(-2.0f * windowCoords.y / constants::SCREEN_HEIGHT + 1);
+
+        // if (debug)
+        // {
+        //     std::cout << localcoords.x << ",," << localcoords.y << std::endl;
+        // }
+        return localcoords;
+    }
 }
