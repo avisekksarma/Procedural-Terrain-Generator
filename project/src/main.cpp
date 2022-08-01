@@ -100,6 +100,7 @@ int main()
     Cube cube(window);
     Cube cube2(window);
     sf::Clock clock; // starts the clock
+    float angle = 4.0f;
 
     while (window.isOpen())
     {
@@ -114,8 +115,9 @@ int main()
         // cube.translate(glMath::vec3f(140.0f, 0.0, -2.0f));
 
         // cube.scale(glMath::vec3f(0.5, 0.5, 0.5));
+        cube.rotate(glMath::vec3f(0,1,0),angle);
         cube.translate(glMath::vec3f(140.0f,0.0,-5.0f));
-        cube2.translate(glMath::vec3f(-140.0f,0.0,-5.0f));
+        angle += 0.2;
         // -----------------------------
         // change view matrix here
         // -----------------------------
