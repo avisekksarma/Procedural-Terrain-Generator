@@ -1,11 +1,12 @@
-#include "../include/cube.h"
+#include "../include/terrain.h"
 #include "../include/glMath.h"
 #include "../include/constants.h"
 #include <list>
 #include <iostream>
 using namespace std;
 
-Cube::Cube(sf::RenderWindow &w) : window(&w), model(glMath::mat4f(1.0f)), view(1.0f), proj(1.0f),zbuffer(constants::SCREEN_WIDTH, constants::SCREEN_HEIGHT)
+
+Terrain::Terrain(sf::RenderWindow &w) : window(&w), model(glMath::mat4f(1.0f)), view(1.0f), proj(1.0f),zbuffer(constants::SCREEN_WIDTH, constants::SCREEN_HEIGHT)
 {
 
 	local.tris = {
@@ -65,7 +66,7 @@ Cube::Cube(sf::RenderWindow &w) : window(&w), model(glMath::mat4f(1.0f)), view(1
 	first = true;
 }
 
-void Cube::drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, sf::Color color)
+void Terrain::drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, sf::Color color)
 {
 	// change to window coordinate first
 	// p1.x = (p1.x+1) * 540;
@@ -100,7 +101,7 @@ void Cube::drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, sf
 	first = (first) ? false : true;
 }
 
-void Cube::BLA(int x0, int y0, int xl, int yl, sf::Color color)
+void Terrain::BLA(int x0, int y0, int xl, int yl, sf::Color color)
 {
 	int delx = std::fabs(xl - x0);
 	int dely = std::fabs(yl - y0);
@@ -143,16 +144,16 @@ void Cube::BLA(int x0, int y0, int xl, int yl, sf::Color color)
 	}
 }
 
-void Cube::putpixel(float x, float y, sf::Color color)
+void Terrain::putpixel(float x, float y, sf::Color color)
 {
 	
 	sf::Vertex vertex(sf::Vector2f(x, y), color);
 	window->draw(&vertex, 1, sf::Points);
 }
 
-void Cube::render()
+void Terrain::render()
 {
-	
+	int count = 0;
 	sf::Color colors[12] = {
 		// red
 		sf::Color(255, 0, 0),
@@ -182,7 +183,7 @@ void Cube::render()
 	}
 }
 
-void Cube::translate(glMath::vec3f p)
+void Terrain::translate(glMath::vec3f p)
 {
 	p.x = (float)(2 * p.x) / constants::SCREEN_WIDTH;
 	p.y = (float)(2 * p.y) / constants::SCREEN_HEIGHT;
@@ -194,30 +195,30 @@ void Cube::translate(glMath::vec3f p)
 	model = glMath::translate<float>(model, p);
 }
 
-void Cube::rotate(glMath::vec3f p, float angle)
+void Terrain::rotate(glMath::vec3f p, float angle)
 {
 	model = glMath::rotate<float>(model, glMath::degToRadians(angle), p);
 }
 
-void Cube::scale(glMath::vec3f p)
+void Terrain::scale(glMath::vec3f p)
 {
 	model = glMath::scale<float>(model, p);
 }
 
-void Cube::perspective(float fov, float sw, float sh, float nearZ, float farZ)
+void Terrain::perspective(float fov, float sw, float sh, float nearZ, float farZ)
 {
 	proj = glMath::perspective<float>(fov, sw, sh, nearZ, farZ);
 }
 
-void Cube::lookAt(glMath::vec3f from, glMath::vec3f to, glMath::vec3f temp)
+void Terrain::lookAt(glMath::vec3f from, glMath::vec3f to, glMath::vec3f temp)
 {
 	view = glMath::lookAt<float>(from, to, temp);
 }
 
-// fills the meshcube upto to be rendered part i.e. upto projection done
-void Cube::updateVertices()
+// fills the meshTerrain upto to be rendered part i.e. upto projection done
+void Terrain::updateVertices()
 {
-	meshCube.tris.clear();
+	meshTerrain.tris.clear();
 	listTriangles.clear();
 	zbuffer.Clear();
 
@@ -271,18 +272,18 @@ void Cube::updateVertices()
 			t.p[1].y = (int)(((t.p[1].y - 1) * -360) + 0.5);
 			t.p[2].x = (int)(((t.p[2].x + 1) * 540) + 0.5);
 			t.p[2].y = (int)(((t.p[2].y - 1) * -360) + 0.5);
-			meshCube.tris.push_back(t);
+			meshTerrain.tris.push_back(t);
 		}
 	}
-	// cout << "SIZEOF MESH before clipping:" << meshCube.tris.size() << endl;
+	// cout << "SIZEOF MESH before clipping:" << meshTerrain.tris.size() << endl;
 	clipAgainstPlanes();
-	// cout << "SIZEOF MESH after clipping:" << meshCube.tris.size() << endl;
+	// cout << "SIZEOF MESH after clipping:" << meshTerrain.tris.size() << endl;
 }
 
-void Cube::clipAgainstPlanes()
+void Terrain::clipAgainstPlanes()
 {
 	int countOfTriangles = 0;
-	for (auto &triToRaster : meshCube.tris)
+	for (auto &triToRaster : meshTerrain.tris)
 	{
 		// Clip triangles against all four screen edges, this could yield
 		// a bunch of triangles, so create a queue that we traverse to
@@ -342,9 +343,9 @@ void Cube::clipAgainstPlanes()
 	}
 	// cout << "SIZEOF MESH after the screen clipping:" << countOfTriangles << endl;
 }
-void Cube::toWindowCoord()
+void Terrain::toWindowCoord()
 {
-	for (auto &i : meshCube.tris)
+	for (auto &i : meshTerrain.tris)
 	{
 		for (auto &j : i.p)
 		{
@@ -355,7 +356,7 @@ void Cube::toWindowCoord()
 	}
 }
 
-void Cube::fillBottomFlatTriangle(glMath::vec3f v1, glMath::vec3f v2, glMath::vec3f v3, sf::Color color)
+void Terrain::fillBottomFlatTriangle(glMath::vec3f v1, glMath::vec3f v2, glMath::vec3f v3, sf::Color color)
 {
 	float invslope1 = (float)(v2.x - v1.x) / (v2.y - v1.y);
 	float invslope2 = (float)(v3.x - v1.x) / (v3.y - v1.y);
@@ -375,7 +376,7 @@ void Cube::fillBottomFlatTriangle(glMath::vec3f v1, glMath::vec3f v2, glMath::ve
 	}
 }
 
-void Cube::fillTopFlatTriangle(glMath::vec3f v1, glMath::vec3f v2, glMath::vec3f v3, sf::Color color)
+void Terrain::fillTopFlatTriangle(glMath::vec3f v1, glMath::vec3f v2, glMath::vec3f v3, sf::Color color)
 {
 	float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
 	float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
@@ -395,7 +396,7 @@ void Cube::fillTopFlatTriangle(glMath::vec3f v1, glMath::vec3f v2, glMath::vec3f
 	}
 }
 
-void Cube::scanLine(int x0, int y0, int x1, int y1, sf::Color color)
+void Terrain::scanLine(int x0, int y0, int x1, int y1, sf::Color color)
 {
 	int delx = std::fabs(x1 - x0);
 	int a = 0;
@@ -413,7 +414,7 @@ void Cube::scanLine(int x0, int y0, int x1, int y1, sf::Color color)
 	}
 }
 
-void Cube::fillTriangle(glMath::vec3f vt1, glMath::vec3f vt2, glMath::vec3f vt3, sf::Color color)
+void Terrain::fillTriangle(glMath::vec3f vt1, glMath::vec3f vt2, glMath::vec3f vt3, sf::Color color)
 {
 	// zbuffer.makePlaneEquation({1,2,-2},{3,-2,1},{5,1,-4});
 	zbuffer.makePlaneEquation(vt1, vt2, vt3);
@@ -460,5 +461,36 @@ void Cube::fillTriangle(glMath::vec3f vt1, glMath::vec3f vt2, glMath::vec3f vt3,
 	}
 }
 
+void Terrain::generateInitialTerrain(int x, int z, int w, int l)
+{
+    local.tris.clear();
+    consts.create(x, z, w, l);
+    int row = consts.lengthZ / consts.ztrilen;
+    int col = consts.widthX / consts.xtrilen;
+    // generates a terrain in xz plane from [-10,10] in both axes
+    glMath::trianglef up;
+    glMath::trianglef down;
+    int x = consts.XTopLeft;
+    int z = consts.ZTopLeft;
+    for (int i = 0; i < row; i++)
+    {
+        for (int j = 0; j < col; j++)
+        {
+            up.p[1] = glMath::vec3f(x, 0.0f, z);
+            up.p[2] = glMath::vec3f(x + consts.xtrilen, 0.0f, z);
+            up.p[0] = glMath::vec3f(x, 0.0f, z - consts.ztrilen);
 
+            down.p[0] = up.p[0];
+            down.p[1] = up.p[2];
+            down.p[2] = glMath::vec3f(x + consts.xtrilen, 0.0f, z - consts.ztrilen);
+
+            x += consts.xtrilen;
+
+            local.tris.push_back(up);
+            local.tris.push_back(down);
+        }
+        z -= consts.ztrilen;
+    }
+
+}
 

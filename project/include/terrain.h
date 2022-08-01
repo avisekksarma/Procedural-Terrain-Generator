@@ -1,5 +1,4 @@
 #pragma once
-
 #include <SFML/Graphics.hpp>
 #include <sstream>
 #include <vector>
@@ -17,15 +16,32 @@ struct mesh
 };
 
 
-class Cube
+struct TerrainConstants
+{
+    int XTopLeft;
+    int ZTopLeft;
+    int widthX;
+    int lengthZ;
+    int xtrilen = 10.0f;
+    int ztrilen = 10.0f;
+    TerrainConstants(){}
+    void create(int x, int z, int w, int l)
+    {
+        XTopLeft = x;
+        ZTopLeft = z;
+        widthX = w;
+        lengthZ = l;
+    }
+};
+class Terrain
 {
 
 public:
-	Cube(sf::RenderWindow &w);
+	Terrain(sf::RenderWindow &w);
 	sf::RenderWindow *window;
-	mesh meshCube; // copy
+	mesh meshTerrain; // copy
 	mesh local;	   // actual
-
+TerrainConstants consts;
 	glMath::mat4f model;
 	glMath::mat4f view;
 	glMath::mat4f proj;
@@ -47,8 +63,7 @@ public:
 	void clipAgainstPlanes();
 
 	// Terrain Parts
-	void generateInitialTerrain();
-
+ void generateInitialTerrain(int x, int z, int w, int l);
 
 private:
 	void putpixel(float x, float y, sf::Color color);
