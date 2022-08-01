@@ -11,11 +11,15 @@
 
 #include <list>
 
-struct mesh
+namespace CubeGen
 {
-	std::vector<glMath::trianglef> tris;
-};
 
+	struct mesh
+	{
+		std::vector<glMath::trianglef> tris;
+	};
+
+}
 
 class Cube
 {
@@ -23,8 +27,8 @@ class Cube
 public:
 	Cube(sf::RenderWindow &w);
 	sf::RenderWindow *window;
-	mesh meshCube; // copy
-	mesh local;	   // actual
+	CubeGen::mesh meshCube; // copy
+	CubeGen::mesh local;	   // actual
 
 	glMath::mat4f model;
 	glMath::mat4f view;
@@ -48,7 +52,6 @@ public:
 
 	// Terrain Parts
 	void generateInitialTerrain();
-
 
 private:
 	void putpixel(float x, float y, sf::Color color);
