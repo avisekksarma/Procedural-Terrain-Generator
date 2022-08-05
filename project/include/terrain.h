@@ -65,6 +65,8 @@ public:
 
     // Terrain Parts
     void generateInitialTerrain(int x, int z, int w, int l);
+    void initTerrain();
+
 
 private:
     void putpixel(float x, float y, sf::Color color);

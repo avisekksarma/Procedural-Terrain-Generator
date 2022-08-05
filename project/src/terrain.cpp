@@ -4,6 +4,10 @@
 #include <list>
 #include <iostream>
 #include "../include/PerlinNoise.hpp"
+#include "../include/perlin.h"
+#include "../include/random.hpp"
+
+using Random = effolkronium::random_static;
 
 Terrain::Terrain(sf::RenderWindow &w) : window(&w), model(glMath::mat4f(1.0f)), view(1.0f), proj(1.0f), zbuffer(constants::SCREEN_WIDTH, constants::SCREEN_HEIGHT)
 {
@@ -175,9 +179,9 @@ void Terrain::render()
     for (auto &i : listTriangles)
     {
 
-        // drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
+        drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
         // fillTriangle(i.p[0], i.p[1], i.p[2], colors[count++]);
-        fillTriangle(i.p[0], i.p[1], i.p[2], sf::Color(86, 125, 70));
+        // fillTriangle(i.p[0], i.p[1], i.p[2], sf::Color(86, 125, 70));
         if (count == 12)
         {
             count = 0;
@@ -244,7 +248,9 @@ void Terrain::updateVertices()
         glMath::trianglef clipped[2];
         // the w component is 1 until it is projected by pers. matrix
         // TODO: for now i put 1.0f in plane too.
-        nClippedTriangles = glMath::triangleNumClippedInPlane<float>({0.0f, 10.0f, 0.0f}, {0.0f, -1.0f, 0.0f}, triafterView, clipped[0], clipped[1]);
+        // camera and clipping works version
+        // nClippedTriangles = glMath::triangleNumClippedInPlane<float>({0.0f, 0.0f, -1.5f}, {0.0f, 0.0f, -1.0f}, triafterView, clipped[0], clipped[1]);
+        nClippedTriangles = glMath::triangleNumClippedInPlane<float>({0.0f, 0.0f, -1.5f}, {0.0f, 0.0f, -1.0f}, triafterView, clipped[0], clipped[1]);
         // say looping in two triangles.
         for (int m = 0; m < nClippedTriangles; m++)
         {
@@ -409,9 +415,9 @@ void Terrain::scanLine(int x0, int y0, int x1, int y1, sf::Color color)
         // z = zbuffer.returnZ(x0, y0);
         // if (zbuffer.TestAndSet(x0, y0, z))
         // {
-        putpixel(x0, y0, color);
+            putpixel(x0, y0, color);
         // }
-        // z = z - (zbuffer.plane.A / zbuffer.plane.C);
+        z = z - (zbuffer.plane.A / zbuffer.plane.C);
         x0 += a;
     }
 }
@@ -484,11 +490,14 @@ void Terrain::generateInitialTerrain(int _x, int _z, int _w, int _l)
     // std::cout << row << std::endl;
     // std::cout << col << std::endl;
     // std::cout << "=======" << std::endl;
-    const siv::PerlinNoise::seed_type seed = 123456u;
-    const siv::PerlinNoise perlin{seed};
+    // const siv::PerlinNoise::seed_type seed = 123456u;
+    // const siv::PerlinNoise perlin{seed};
 
     float incX = (float)(2 * consts.xtrilen) / constants::SCREEN_WIDTH;
     float incZ = (float)(2 * consts.ztrilen) / constants::SCREEN_HEIGHT;
+
+    auto val = Random::get(1000,6000);
+    Perlin perlin(4, 1.f, 1.f, val);
 
     double perlinNoise[6] = {0.0f};
     for (int i = 0; i < row; i++)
@@ -510,18 +519,29 @@ void Terrain::generateInitialTerrain(int _x, int _z, int _w, int _l)
             int k;
             for (k = 0; k < 6; k++)
             {
-                const double noise = perlin.octave2D_01((j * 0.01), (i * 0.01), 4);
+                const double noise = perlin.Get((k * j * 0.01) , ( k * i * 0.01));
+
+                //  noise = perlin.Get(i * 0.3f, j * 0.3f) * 2.f;
+                // float y = 0;
                 perlinNoise[k] = noise;
             }
-            up.p[1] = glMath::vec3f(lC.x, perlinNoise[0], lC.y);
-            up.p[2] = glMath::vec3f(lC.x + incX, perlinNoise[1], lC.y);
-            up.p[0] = glMath::vec3f(lC.x, perlinNoise[2], lC.y + incZ);
+            // up.p[1] = glMath::vec3f(lC.x, perlinNoise[0], lC.y);
+            // up.p[2] = glMath::vec3f(lC.x + incX, perlinNoise[1], lC.y);
+            // up.p[0] = glMath::vec3f(lC.x, perlinNoise[2], lC.y + incZ);
 
-            // down.p[0] = up.p[0];
-            down.p[0] = glMath::vec3f(lC.x, perlinNoise[3], lC.y + incZ);
-            down.p[1] = glMath::vec3f(lC.x + incX, perlinNoise[4], lC.y);
+            // // down.p[0] = up.p[0];
+            // down.p[0] = glMath::vec3f(lC.x, perlinNoise[3], lC.y + incZ);
+            // down.p[1] = glMath::vec3f(lC.x + incX, perlinNoise[4], lC.y);
+            // // down.p[2] = glMath::vec3f(lC.x + incX, perlinNoise[5], lC.y + incZ);
             // down.p[2] = glMath::vec3f(lC.x + incX, perlinNoise[5], lC.y + incZ);
-            down.p[2] = glMath::vec3f(lC.x + incX, perlinNoise[5], lC.y + incZ);
+
+            up.p[1] = glMath::vec3f(lC.x, fabs(perlin.Get(lC.x, lC.y)), lC.y);
+            up.p[2] = glMath::vec3f(lC.x + incX, fabs(perlin.Get(lC.x + incX, lC.y)), lC.y);
+            up.p[0] = glMath::vec3f(lC.x, fabs(perlin.Get(lC.x, lC.y+incZ)), lC.y + incZ);
+
+            down.p[0] = glMath::vec3f(lC.x, fabs(perlin.Get(lC.x, lC.y + incZ)), lC.y + incZ);
+            down.p[1] = glMath::vec3f(lC.x + incX, fabs(perlin.Get(lC.x + incX, lC.y)), lC.y);
+            down.p[2] = glMath::vec3f(lC.x + incX, fabs(perlin.Get(lC.x + incX, lC.y + incZ)), lC.y + incZ);
 
             // if (i == 0 and j == 0)
             // {
@@ -540,4 +560,23 @@ void Terrain::generateInitialTerrain(int _x, int _z, int _w, int _l)
     // std::cout << "length of tris: " << local.tris.size() << std::endl;
     // local.tris.push_back({glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f)});
     // local.tris.push_back({glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, 0.5f)});
+}
+
+int xSize = 20;
+int zSize = 20;
+
+void Terrain::initTerrain()
+{
+    Perlin perlin(4, 2.f, 2.f, 1234);
+    auto vertices = new glMath::vec3f[(xSize + 1) * (zSize + 1)];
+    for (int i=0, z=0; z <= zSize; z ++)
+    {
+        for ( int x=0; x <= xSize; x ++)
+        {
+            float y = perlin.Get(x * 0.3f, y * 0.3f);
+            vertices[i] = glMath::vec3f(consts.XTopLeft + x, y, consts.ZTopLeft + z);
+            i++;
+        }
+    }
+
 }

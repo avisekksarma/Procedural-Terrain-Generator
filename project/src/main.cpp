@@ -6,9 +6,11 @@
 #include "../include/arguments.h"
 #include "../include/terrain.h"
 
+using namespace std;
+
 void checkCameraMovement(cameraArgs &cargs)
 {
-    float camSpeed = 0.01f;
+    float camSpeed = 0.1f;
     glMath::vec3f yComp(0.0, 2.0f, 0.0f);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {
@@ -90,17 +92,23 @@ int main()
     sf::RenderWindow window(sf::VideoMode(constants::SCREEN_WIDTH, constants::SCREEN_HEIGHT), "SFML works!");
     auto desktop = sf::VideoMode::getDesktopMode();
     window.setPosition(sf::Vector2i(desktop.width / 2.0f - window.getSize().x / 2, desktop.height / 2 - window.getSize().y / 2));
+    sf::Mouse::setPosition(sf::Vector2i(constants::SCREEN_WIDTH/2.f, constants::SCREEN_HEIGHT/2.f), window);
     // window.setFramerateLimit(240);
 
     // -----------------------------
     //  initialize here
     // -----------------------------
-    cameraArgs cargs(glMath::vec3f(0.0f, 0.71f,-0.704998f), glMath::vec3f(0.0f, -1.0f, -1.5f), glMath::vec3f(0.0f, 1.0f, 0.0f));
+    // cameraArgs cargs(glMath::vec3f(0.0f, 0.71f,-0.704998f), glMath::vec3f(0.0f, -1.0f, -1.5f), glMath::vec3f(0.0f, 1.0f, 0.0f));
+    // cameraArgs cargs(glMath::vec3f(0.0f, 0.71f,-0.704998f), glMath::vec3f(0.0f, -1.0f, -1.5f), glMath::vec3f(0.0f, 1.0f, 0.0f));
+    // camera and clipping works version
+    cameraArgs cargs(glMath::vec3f(0.0f, 0.71f,1.605f), glMath::vec3f(0.0f, -1.0f, -1.5f), glMath::vec3f(0.0f, 1.0f, 0.0f));
     persArgs pargs(45.0f, constants::SCREEN_WIDTH, constants::SCREEN_HEIGHT, -0.1f, -100.0f);
     mouseArgs margs(true, -90.f, 0.0f, (constants::SCREEN_WIDTH / 2.0f), (constants::SCREEN_HEIGHT / 2.0f));
     // Cube cube(window);
     Terrain terrain(window);
-    terrain.generateInitialTerrain(constants::SCREEN_WIDTH / 4.0f, constants::SCREEN_HEIGHT / 4.0f, constants::SCREEN_WIDTH / 2.0f, constants::SCREEN_HEIGHT / 2.0f);
+    // terrain.generateInitialTerrain(constants::SCREEN_WIDTH / 4.0f, constants::SCREEN_HEIGHT / 4.0f, constants::SCREEN_WIDTH / 2.0f, constants::SCREEN_HEIGHT / 2.0f);
+    // terrain.generateInitialTerrain(0.1*constants::SCREEN_WIDTH,0.1*constants::SCREEN_HEIGHT,0.8*constants::SCREEN_WIDTH,0.8f*constants::SCREEN_HEIGHT);
+    terrain.generateInitialTerrain(-2.0f*constants::SCREEN_WIDTH,-2.0f*constants::SCREEN_HEIGHT,5*constants::SCREEN_WIDTH,5*constants::SCREEN_HEIGHT);
     sf::Clock clock; // starts the clock
     float angle = 4.0f;
 
@@ -125,8 +133,8 @@ int main()
         // -----------------------------
         // change view matrix here
         // -----------------------------
-        std::cout<<"---------------"<<std::endl;
-        std::cout<<cargs.cameraPos<<std::endl;
+        // std::cout<<"---------------"<<std::endl;
+        // std::cout<<cargs.cameraPos<<std::endl;
         terrain.lookAt(cargs.cameraPos, cargs.cameraPos + cargs.cameraFront, cargs.cameraUp);
 
         // -----------------------------
@@ -155,6 +163,8 @@ int main()
                 if (event.key.code == sf::Keyboard::Escape)
                 {
                     window.close();
+                }else if (event.key.code == sf::Keyboard::Enter){
+                    terrain.generateInitialTerrain(0.1*constants::SCREEN_WIDTH,0.1*constants::SCREEN_HEIGHT,0.8*constants::SCREEN_WIDTH,0.8f*constants::SCREEN_HEIGHT);
                 }
                 break;
             // case sf::Event::MouseWheelScrolled:
@@ -172,6 +182,7 @@ int main()
 
         window.clear();
         terrain.updateVertices();
+        // cout<<cargs.cameraPos<<endl;
         terrain.render();
         window.display();
     }
