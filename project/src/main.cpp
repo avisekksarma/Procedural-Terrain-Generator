@@ -127,6 +127,8 @@ int main()
     // terrain.generateInitialTerrain(constants::SCREEN_WIDTH / 4.0f, constants::SCREEN_HEIGHT / 4.0f, constants::SCREEN_WIDTH / 2.0f, constants::SCREEN_HEIGHT / 2.0f);
     terrain.generateInitialTerrain(0.1*constants::SCREEN_WIDTH,0.1*constants::SCREEN_HEIGHT,0.2*constants::SCREEN_WIDTH,0.2f*constants::SCREEN_HEIGHT);
     // terrain.generateInitialTerrain(-2.0f*constants::SCREEN_WIDTH,-2.0f*constants::SCREEN_HEIGHT,5*constants::SCREEN_WIDTH,5*constants::SCREEN_HEIGHT);
+    mouseArgs margs(true, -90.f, 0.0f, (constants::SCREEN_WIDTH/2.0f), (constants::SCREEN_HEIGHT/2.0f));
+    // Cube cube(window,cargs);
     sf::Clock clock; // starts the clock
     float angle = 4.0f;
 
