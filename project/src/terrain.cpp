@@ -7,9 +7,10 @@
 #include "../include/perlin.h"
 #include "../include/random.hpp"
 
+using namespace std;
 using Random = effolkronium::random_static;
 
-Terrain::Terrain(sf::RenderWindow &w) : window(&w), model(glMath::mat4f(1.0f)), view(1.0f), proj(1.0f), zbuffer(constants::SCREEN_WIDTH, constants::SCREEN_HEIGHT)
+Terrain::Terrain(sf::RenderWindow &w,Context & c) :window(&w),context(c),model(glMath::mat4f(1.0f)), view(1.0f), proj(1.0f), zbuffer(constants::SCREEN_WIDTH, constants::SCREEN_HEIGHT)
 {
 
     // local.tris = {
@@ -244,6 +245,19 @@ void Terrain::updateVertices()
             triafterView.p[k] = glMath::vec3f(v.x, v.y, v.z);
             k++;
         }
+        
+        glMath::vec3f line2 = triafterView.p[2]-triafterView.p[0];
+        glMath::vec3f line1 = triafterView.p[1]-triafterView.p[0];
+        glMath::vec3f normal =glMath::cross<float>(line2,line1);
+        normal = glMath::normalize(normal);
+        glMath::vec3f camDir = -context.cargs.cameraFront;
+        camDir = glMath::normalize(camDir);
+        if(glMath::dot(normal,camDir)<0){
+            // std::cout<<"gayo"<<std::endl;
+            continue;
+        }
+
+
         int nClippedTriangles = 0;
         glMath::trianglef clipped[2];
         // the w component is 1 until it is projected by pers. matrix
@@ -497,7 +511,7 @@ void Terrain::generateInitialTerrain(int _x, int _z, int _w, int _l)
     float incZ = (float)(2 * consts.ztrilen) / constants::SCREEN_HEIGHT;
 
     auto val = Random::get(1000,6000);
-    Perlin perlin(4, 1.f, 1.f, val);
+    Perlin perlin(4, 1.f, 1.2f, val);
 
     double perlinNoise[6] = {0.0f};
     for (int i = 0; i < row; i++)

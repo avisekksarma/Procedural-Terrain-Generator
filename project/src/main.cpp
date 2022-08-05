@@ -5,38 +5,9 @@
 #include "../include/constants.h"
 #include "../include/arguments.h"
 #include "../include/terrain.h"
+#include "../include/context.h"
 
 using namespace std;
-
-void checkCameraMovement(cameraArgs &cargs)
-{
-    float camSpeed = 0.1f;
-    glMath::vec3f yComp(0.0, 2.0f, 0.0f);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-    {
-        cargs.cameraPos += cargs.cameraFront * camSpeed;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-    {
-        cargs.cameraPos -= cargs.cameraFront * camSpeed;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-    {
-        cargs.cameraPos -= glMath::normalize(glMath::cross(cargs.cameraFront, cargs.cameraUp)) * camSpeed;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-    {
-        cargs.cameraPos += glMath::normalize(glMath::cross(cargs.cameraFront, cargs.cameraUp)) * camSpeed;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-    {
-        cargs.cameraPos += yComp * camSpeed;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-    {
-        cargs.cameraPos -= yComp * camSpeed;
-    }
-}
 
 void handleMouseMovement(mouseArgs &margs, cameraArgs &cargs, sf::RenderWindow &window)
 {
@@ -75,7 +46,50 @@ void handleMouseMovement(mouseArgs &margs, cameraArgs &cargs, sf::RenderWindow &
     direction.y = sin(glMath::degToRadians(margs.pitch));
     direction.z = sin(glMath::degToRadians(margs.yaw)) * cos(glMath::degToRadians(margs.pitch));
 
-    cargs.cameraFront = glMath::normalize(direction);
+    // cargs.cameraFront = glMath::normalize(direction);
+    cargs.cameraFront = direction;
+}
+
+void checkCameraMovement(cameraArgs &cargs,mouseArgs& margs,sf::RenderWindow & window)
+{
+    float camSpeed = 0.007f;
+    glMath::vec3f yComp(0.0, 2.0f, 0.0f);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    {
+        cargs.cameraPos += cargs.cameraFront * camSpeed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+    {
+        cargs.cameraPos -= cargs.cameraFront * camSpeed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    {
+        cargs.cameraPos -= glMath::normalize(glMath::cross(cargs.cameraFront, cargs.cameraUp)) * camSpeed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    {
+        cargs.cameraPos += glMath::normalize(glMath::cross(cargs.cameraFront, cargs.cameraUp)) * camSpeed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    {
+        cargs.cameraPos += yComp * camSpeed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    {
+        cargs.cameraPos -= yComp * camSpeed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    {
+        margs.yaw += 1.0f;
+        handleMouseMovement(margs,cargs,window);
+        // cargs.cameraPos -= yComp * camSpeed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    {
+        // cargs.cameraPos -= yComp * camSpeed;
+        margs.yaw -= 1.0f;
+        handleMouseMovement(margs,cargs,window);
+    }
 }
 
 void handleMouseScroll(persArgs &pargs, int delta)
@@ -86,6 +100,8 @@ void handleMouseScroll(persArgs &pargs, int delta)
     if (pargs.fov > 45.0f)
         pargs.fov = 45.0f;
 }
+
+
 
 int main()
 {
@@ -101,14 +117,18 @@ int main()
     // cameraArgs cargs(glMath::vec3f(0.0f, 0.71f,-0.704998f), glMath::vec3f(0.0f, -1.0f, -1.5f), glMath::vec3f(0.0f, 1.0f, 0.0f));
     // cameraArgs cargs(glMath::vec3f(0.0f, 0.71f,-0.704998f), glMath::vec3f(0.0f, -1.0f, -1.5f), glMath::vec3f(0.0f, 1.0f, 0.0f));
     // camera and clipping works version
-    cameraArgs cargs(glMath::vec3f(0.0f, 0.71f,1.605f), glMath::vec3f(0.0f, -1.0f, -1.5f), glMath::vec3f(0.0f, 1.0f, 0.0f));
+
+    Context context;
+    context.cargs.create(glMath::vec3f(0.0f, 0.71f,1.605f), glMath::vec3f(0.0f, -1.0f, -1.5f), glMath::vec3f(0.0f, 1.0f, 0.0f));
+    context.margs.create(true, -90.f, 0.0f, (constants::SCREEN_WIDTH / 2.0f), (constants::SCREEN_HEIGHT / 2.0f));
     persArgs pargs(45.0f, constants::SCREEN_WIDTH, constants::SCREEN_HEIGHT, -0.1f, -100.0f);
-    mouseArgs margs(true, -90.f, 0.0f, (constants::SCREEN_WIDTH / 2.0f), (constants::SCREEN_HEIGHT / 2.0f));
     // Cube cube(window);
-    Terrain terrain(window);
+    Terrain terrain(window,context);
     // terrain.generateInitialTerrain(constants::SCREEN_WIDTH / 4.0f, constants::SCREEN_HEIGHT / 4.0f, constants::SCREEN_WIDTH / 2.0f, constants::SCREEN_HEIGHT / 2.0f);
-    // terrain.generateInitialTerrain(0.1*constants::SCREEN_WIDTH,0.1*constants::SCREEN_HEIGHT,0.8*constants::SCREEN_WIDTH,0.8f*constants::SCREEN_HEIGHT);
-    terrain.generateInitialTerrain(-2.0f*constants::SCREEN_WIDTH,-2.0f*constants::SCREEN_HEIGHT,5*constants::SCREEN_WIDTH,5*constants::SCREEN_HEIGHT);
+    terrain.generateInitialTerrain(0.1*constants::SCREEN_WIDTH,0.1*constants::SCREEN_HEIGHT,0.2*constants::SCREEN_WIDTH,0.2f*constants::SCREEN_HEIGHT);
+    // terrain.generateInitialTerrain(-2.0f*constants::SCREEN_WIDTH,-2.0f*constants::SCREEN_HEIGHT,5*constants::SCREEN_WIDTH,5*constants::SCREEN_HEIGHT);
+    mouseArgs margs(true, -90.f, 0.0f, (constants::SCREEN_WIDTH/2.0f), (constants::SCREEN_HEIGHT/2.0f));
+    // Cube cube(window,cargs);
     sf::Clock clock; // starts the clock
     float angle = 4.0f;
 
@@ -135,7 +155,7 @@ int main()
         // -----------------------------
         // std::cout<<"---------------"<<std::endl;
         // std::cout<<cargs.cameraPos<<std::endl;
-        terrain.lookAt(cargs.cameraPos, cargs.cameraPos + cargs.cameraFront, cargs.cameraUp);
+        terrain.lookAt(context.cargs.cameraPos, context.cargs.cameraPos + context.cargs.cameraFront, context.cargs.cameraUp);
 
         // -----------------------------
         // change proj matrix here
@@ -156,7 +176,7 @@ int main()
 
             // key pressed
             case sf::Event::MouseMoved:
-                handleMouseMovement(margs, cargs, window);
+                handleMouseMovement(context.margs, context.cargs, window);
                 break;
 
             case sf::Event::KeyPressed:
@@ -178,7 +198,7 @@ int main()
             }
         }
 
-        checkCameraMovement(cargs);
+        checkCameraMovement(context.cargs,context.margs,window);
 
         window.clear();
         terrain.updateVertices();

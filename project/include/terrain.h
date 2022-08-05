@@ -5,7 +5,7 @@
 #include "../include/glMath.h"
 #include <iostream>
 #include <math.h>
-
+#include "./context.h"
 #include "./zBufferTemp.h"
 
 #include <list>
@@ -38,8 +38,9 @@ class Terrain
 {
 
 public:
-    Terrain(sf::RenderWindow &w);
+    Terrain(sf::RenderWindow &w,Context & c);
     sf::RenderWindow *window;
+    Context &context;
     TerrainGen::mesh meshTerrain; // copy
     TerrainGen::mesh local;       // actual
     TerrainConstants consts;

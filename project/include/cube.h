@@ -8,6 +8,7 @@
 #include <math.h>
 
 #include "./zBufferTemp.h"
+#include "../include/arguments.h"
 
 #include <list>
 
@@ -25,10 +26,12 @@ class Cube
 {
 
 public:
-	Cube(sf::RenderWindow &w);
+	Cube(sf::RenderWindow &w,cameraArgs & c);
 	sf::RenderWindow *window;
 	CubeGen::mesh meshCube; // copy
 	CubeGen::mesh local;	   // actual
+
+	cameraArgs & cargs;
 
 	glMath::mat4f model;
 	glMath::mat4f view;

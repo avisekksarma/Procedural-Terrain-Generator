@@ -5,7 +5,7 @@
 #include <iostream>
 using namespace std;
 
-Cube::Cube(sf::RenderWindow &w) : window(&w), model(glMath::mat4f(1.0f)), view(1.0f), proj(1.0f),zbuffer(constants::SCREEN_WIDTH, constants::SCREEN_HEIGHT)
+Cube::Cube(sf::RenderWindow &w,cameraArgs & c) : window(&w),cargs(c), model(glMath::mat4f(1.0f)), view(1.0f), proj(1.0f),zbuffer(constants::SCREEN_WIDTH, constants::SCREEN_HEIGHT)
 {
 
 	local.tris = {
@@ -18,20 +18,20 @@ Cube::Cube(sf::RenderWindow &w) : window(&w), model(glMath::mat4f(1.0f)), view(1
 		{glMath::vec3f(0.5f, -0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, -0.5f, -0.5f)},
 
 		// NORTH
-		{glMath::vec3f(-0.5f, -0.5f, -0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f)},
-		{glMath::vec3f(-0.5f, -0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, -0.5f, -0.5f)},
+		{glMath::vec3f(0.5f, -0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f)},
+		{glMath::vec3f(0.5f, -0.5f, -0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f), glMath::vec3f(-0.5f, -0.5f, -0.5f)},
 
 		// WEST
-		{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f)},
-		{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f), glMath::vec3f(-0.5f, -0.5f, -0.5f)},
+		{glMath::vec3f(-0.5f, -0.5f, -0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f), glMath::vec3f(-0.5f, 0.5f, 0.5f)},
+		{glMath::vec3f(-0.5f, -0.5f, -0.5f), glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(-0.5f, -0.5f, 0.5f)},
 
 		// TOP
 		{glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f)},
 		{glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, 0.5f)},
 
 		// BOTTOM
-		{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(-0.5f, -0.5f, -0.5f), glMath::vec3f(0.5f, -0.5f, -0.5f)},
-		{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(0.5f, -0.5f, -0.5f), glMath::vec3f(0.5f, -0.5f, 0.5f)},
+		{glMath::vec3f(0.5f, -0.5f, 0.5f), glMath::vec3f(0.5f, -0.5f, -0.5f), glMath::vec3f(-0.5f, -0.5f, -0.5f)},
+		{glMath::vec3f(0.5f, -0.5f, 0.5f), glMath::vec3f(-0.5f, -0.5f, -0.5f), glMath::vec3f(-0.5f, -0.5f, 0.5f)},
 
 		// next triangle
 		// SOUTH
@@ -177,8 +177,8 @@ void Cube::render()
 	for (auto &i : listTriangles)
 	{
 
-		// drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
-		fillTriangle(i.p[0], i.p[1], i.p[2], colors[count++]);
+		drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
+		// fillTriangle(i.p[0], i.p[1], i.p[2], colors[count++]);
 	}
 }
 
@@ -214,6 +214,8 @@ void Cube::lookAt(glMath::vec3f from, glMath::vec3f to, glMath::vec3f temp)
 	view = glMath::lookAt<float>(from, to, temp);
 }
 
+
+int flag = 0;
 // fills the meshcube upto to be rendered part i.e. upto projection done
 void Cube::updateVertices()
 {
@@ -230,6 +232,7 @@ void Cube::updateVertices()
 		{
 			glMath::vec4f v(j.x, j.y, j.z, 1);
 			v = view * model * v;
+
 			// cout<<"------------VIEWWW--------"<<endl;
 			// cout<<v.x<<" "<<v.y<<" "<<v.z<<" "<<v.w<<endl;
 			// cout<<"------------VIEWWW END-------"<<endl;
@@ -237,6 +240,24 @@ void Cube::updateVertices()
 			triafterView.p[k] = glMath::vec3f(v.x, v.y, v.z);
 			k++;
 		}
+		glMath::vec3f line2 = glMath::normalize(triafterView.p[2]-triafterView.p[0]);
+        glMath::vec3f line1 = glMath::normalize(triafterView.p[1]-triafterView.p[0]);
+        glMath::vec3f normal =glMath::cross<float>(line2,line1);
+        normal = glMath::normalize(normal);
+        // glMath::vec3f camDir = glMath::vec3f(-cargs.cameraFront.x,-cargs.cameraFront.y,-cargs.cameraFront.z);
+		glMath::vec3f camDir = cargs.cameraPos + cargs.cameraFront;
+        camDir = glMath::normalize(camDir);
+		if(flag == 0){
+			cout<<normal<<endl;
+		}
+        if(glMath::dot(normal,camDir)<0.1){
+            // std::cout<<"gayo"<<std::endl;
+            continue;
+        }
+        // if(normal.z <0){
+        //     // std::cout<<"gayo"<<std::endl;
+        //     continue;
+        // }
 		int nClippedTriangles = 0;
 		glMath::trianglef clipped[2];
 		// the w component is 1 until it is projected by pers. matrix
@@ -277,6 +298,7 @@ void Cube::updateVertices()
 	// cout << "SIZEOF MESH before clipping:" << meshCube.tris.size() << endl;
 	clipAgainstPlanes();
 	// cout << "SIZEOF MESH after clipping:" << meshCube.tris.size() << endl;
+	flag = 1;
 }
 
 void Cube::clipAgainstPlanes()
@@ -403,11 +425,11 @@ void Cube::scanLine(int x0, int y0, int x1, int y1, sf::Color color)
 	float z ;
 	for (int i = 0; i <= delx; i++)
 	{
-		z = zbuffer.returnZ(x0,y0);
-		if(zbuffer.TestAndSet(x0,y0,z))
-		{
+		// z = zbuffer.returnZ(x0,y0);
+		// if(zbuffer.TestAndSet(x0,y0,z))
+		// {
 			putpixel(x0, y0, color);
-		}
+		// }
 		// z = z - (zbuffer.plane.A / zbuffer.plane.C);
 		x0 += a;
 	}
