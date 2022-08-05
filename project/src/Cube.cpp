@@ -145,19 +145,14 @@ void Cube::BLA(int x0, int y0, int xl, int yl, sf::Color color)
 
 void Cube::putpixel(float x, float y, sf::Color color)
 {
-	// float z = zbuffer.returnZ(x, y);
-	// if (zbuffer.updateDepth(x, y, z))
-	// {
-	// 	sf::Vertex vertex(sf::Vector2f(x, y), color);
-	// 	window->draw(&vertex, 1, sf::Points);
-	// }
+	
 	sf::Vertex vertex(sf::Vector2f(x, y), color);
 	window->draw(&vertex, 1, sf::Points);
 }
 
 void Cube::render()
 {
-	int count = 0;
+	
 	sf::Color colors[12] = {
 		// red
 		sf::Color(255, 0, 0),
@@ -178,6 +173,7 @@ void Cube::render()
 		sf::Color(255, 0, 255),
 		sf::Color(255, 0, 255),
 	};
+	int count = 0;
 	for (auto &i : listTriangles)
 	{
 
@@ -245,7 +241,7 @@ void Cube::updateVertices()
 		glMath::trianglef clipped[2];
 		// the w component is 1 until it is projected by pers. matrix
 		// TODO: for now i put 1.0f in plane too.
-		nClippedTriangles = glMath::triangleNumClippedInPlane<float>({0.0f, 0.0f, -1.0f}, {0.0f, 0.0f, -1.0f}, triafterView, clipped[0], clipped[1]);
+		nClippedTriangles = glMath::triangleNumClippedInPlane<float>({0.0f, 0.0f, -4.0f}, {0.0f, 0.0f, -1.0f}, triafterView, clipped[0], clipped[1]);
 		// say looping in two triangles.
 		for (int m = 0; m < nClippedTriangles; m++)
 		{
@@ -463,3 +459,6 @@ void Cube::fillTriangle(glMath::vec3f vt1, glMath::vec3f vt2, glMath::vec3f vt3,
 		fillTopFlatTriangle(vt2, v4, vt3, color);
 	}
 }
+
+
+
