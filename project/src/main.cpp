@@ -8,36 +8,6 @@
 
 using namespace std;
 
-void checkCameraMovement(cameraArgs &cargs)
-{
-    float camSpeed = 0.1f;
-    glMath::vec3f yComp(0.0, 2.0f, 0.0f);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-    {
-        cargs.cameraPos += cargs.cameraFront * camSpeed;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-    {
-        cargs.cameraPos -= cargs.cameraFront * camSpeed;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-    {
-        cargs.cameraPos -= glMath::normalize(glMath::cross(cargs.cameraFront, cargs.cameraUp)) * camSpeed;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-    {
-        cargs.cameraPos += glMath::normalize(glMath::cross(cargs.cameraFront, cargs.cameraUp)) * camSpeed;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-    {
-        cargs.cameraPos += yComp * camSpeed;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-    {
-        cargs.cameraPos -= yComp * camSpeed;
-    }
-}
-
 void handleMouseMovement(mouseArgs &margs, cameraArgs &cargs, sf::RenderWindow &window)
 {
     sf::Mouse m;
@@ -76,6 +46,48 @@ void handleMouseMovement(mouseArgs &margs, cameraArgs &cargs, sf::RenderWindow &
     direction.z = sin(glMath::degToRadians(margs.yaw)) * cos(glMath::degToRadians(margs.pitch));
 
     cargs.cameraFront = glMath::normalize(direction);
+}
+
+void checkCameraMovement(cameraArgs &cargs,mouseArgs& margs,sf::RenderWindow & window)
+{
+    float camSpeed = 0.1f;
+    glMath::vec3f yComp(0.0, 2.0f, 0.0f);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    {
+        cargs.cameraPos += cargs.cameraFront * camSpeed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+    {
+        cargs.cameraPos -= cargs.cameraFront * camSpeed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    {
+        cargs.cameraPos -= glMath::normalize(glMath::cross(cargs.cameraFront, cargs.cameraUp)) * camSpeed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    {
+        cargs.cameraPos += glMath::normalize(glMath::cross(cargs.cameraFront, cargs.cameraUp)) * camSpeed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    {
+        cargs.cameraPos += yComp * camSpeed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    {
+        cargs.cameraPos -= yComp * camSpeed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    {
+        margs.yaw += 1.0f;
+        handleMouseMovement(margs,cargs,window);
+        // cargs.cameraPos -= yComp * camSpeed;
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    {
+        // cargs.cameraPos -= yComp * camSpeed;
+        margs.yaw -= 1.0f;
+        handleMouseMovement(margs,cargs,window);
+    }
 }
 
 void handleMouseScroll(persArgs &pargs, int delta)
@@ -178,7 +190,7 @@ int main()
             }
         }
 
-        checkCameraMovement(cargs);
+        checkCameraMovement(cargs,margs,window);
 
         window.clear();
         terrain.updateVertices();
