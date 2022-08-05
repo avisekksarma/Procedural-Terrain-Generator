@@ -23,8 +23,8 @@ struct TerrainConstants
     int ZTopLeft;
     int widthX;
     int lengthZ;
-    int xtrilen = 54.f;
-    int ztrilen = 36.f;
+    int xtrilen = 10.f;
+    int ztrilen = 10.f;
     TerrainConstants() {}
     void create(int x, int z, int w, int l)
     {
