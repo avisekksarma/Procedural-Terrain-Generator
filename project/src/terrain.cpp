@@ -13,95 +13,14 @@ using Random = effolkronium::random_static;
 Terrain::Terrain(sf::RenderWindow &w,Context & c) :window(&w),context(c),model(glMath::mat4f(1.0f)), view(1.0f), proj(1.0f), zbuffer(constants::SCREEN_WIDTH, constants::SCREEN_HEIGHT)
 {
 
-    // local.tris = {
-    // 	// SOUTH
-    // 	{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, 0.5f)},
-    // 	{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, 0.5f), glMath::vec3f(0.5f, -0.5f, 0.5f)},
-
-    // 	// EAST
-    // 	{glMath::vec3f(0.5f, -0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f)},
-    // 	{glMath::vec3f(0.5f, -0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, -0.5f, -0.5f)},
-
-    // 	// NORTH
-    // 	{glMath::vec3f(-0.5f, -0.5f, -0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f)},
-    // 	{glMath::vec3f(-0.5f, -0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, -0.5f, -0.5f)},
-
-    // 	// WEST
-    // 	{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f)},
-    // 	{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f), glMath::vec3f(-0.5f, -0.5f, -0.5f)},
-
-    // 	// TOP
-    // 	{glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f)},
-    // 	{glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, 0.5f)},
-
-    // 	// BOTTOM
-    // 	{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(-0.5f, -0.5f, -0.5f), glMath::vec3f(0.5f, -0.5f, -0.5f)},
-    // 	{glMath::vec3f(-0.5f, -0.5f, 0.5f), glMath::vec3f(0.5f, -0.5f, -0.5f), glMath::vec3f(0.5f, -0.5f, 0.5f)},
-
-    // next triangle
-    // SOUTH
-    // {glMath::vec3f(-0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(-0.5f, 0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, 0.5f - 2.0f)},
-    // {glMath::vec3f(-0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, -0.5f, 0.5f - 2.0f)},
-
-    // // EAST
-    // {glMath::vec3f(0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, -0.5f - 2.0f)},
-    // {glMath::vec3f(0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, -0.5f, -0.5f - 2.0f)},
-
-    // // NORTH
-    // {glMath::vec3f(-0.5f, -0.5f, -0.5f - 2.0f), glMath::vec3f(-0.5f, 0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, -0.5f - 2.0f)},
-    // {glMath::vec3f(-0.5f, -0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, -0.5f, -0.5f - 2.0f)},
-
-    // // WEST
-    // {glMath::vec3f(-0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(-0.5f, 0.5f, 0.5f - 2.0f), glMath::vec3f(-0.5f, 0.5f, -0.5f - 2.0f)},
-    // {glMath::vec3f(-0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(-0.5f, 0.5f, -0.5f - 2.0f), glMath::vec3f(-0.5f, -0.5f, -0.5f - 2.0f)},
-
-    // // TOP
-    // {glMath::vec3f(-0.5f, 0.5f, 0.5f - 2.0f), glMath::vec3f(-0.5f, 0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, -0.5f - 2.0f)},
-    // {glMath::vec3f(-0.5f, 0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, 0.5f, 0.5f - 2.0f)},
-
-    // // BOTTOM
-    // {glMath::vec3f(-0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(-0.5f, -0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, -0.5f, -0.5f - 2.0f)},
-    // {glMath::vec3f(-0.5f, -0.5f, 0.5f - 2.0f), glMath::vec3f(0.5f, -0.5f, -0.5f - 2.0f), glMath::vec3f(0.5f, -0.5f, 0.5f - 2.0f)}
-
-    // };
-
-    // color = sf::Color(255,255,255);
-    // first = true;
 }
 
 void Terrain::drawTriangle(glMath::vec3f p1, glMath::vec3f p2, glMath::vec3f p3, sf::Color color)
 {
-    // change to window coordinate first
-    // p1.x = (p1.x+1) * 540;
-    // p1.y = (p1.y-1) * -360;
-    // p2.x = (p2.x+1) * 540;
-    // p2.y = (p2.y-1) * -360;
-    // p3.x = (p3.x+1) * 540;
-    // p3.y = (p3.y-1) * -360;
-
-    // transforming projected coordinates to window coordinates
-    // changed here (commented out)
-    // p1.x = (int)(((p1.x + 1) * 540) + 0.5);
-    // p1.y = (int)(((p1.y - 1) * -360) + 0.5);
-    // p2.x = (int)(((p2.x + 1) * 540) + 0.5);
-    // p2.y = (int)(((p2.y - 1) * -360) + 0.5);
-    // p3.x = (int)(((p3.x + 1) * 540) + 0.5);
-    // p3.y = (int)(((p3.y - 1) * -360) + 0.5);
 
     BLA(p1.x, p1.y, p2.x, p2.y, color);
     BLA(p2.x, p2.y, p3.x, p3.y, color);
     BLA(p3.x, p3.y, p1.x, p1.y, color);
-    // if (first)
-    // {
-    // 	BLA(p1.x, p1.y, p2.x, p2.y, color);
-    // 	BLA(p2.x, p2.y, p3.x, p3.y, color);
-    // }
-    // else
-    // {
-    // 	BLA(p2.x, p2.y, p3.x, p3.y, color);
-    // 	BLA(p3.x, p3.y, p1.x, p1.y, color);
-    // }
-    // first = (first) ? false : true;
 }
 
 void Terrain::BLA(int x0, int y0, int xl, int yl, sf::Color color)
@@ -180,9 +99,9 @@ void Terrain::render()
     for (auto &i : listTriangles)
     {
 
-        drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
+        // drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
         // fillTriangle(i.p[0], i.p[1], i.p[2], colors[count++]);
-        // fillTriangle(i.p[0], i.p[1], i.p[2], sf::Color(86, 125, 70));
+        fillTriangle(i.p[0], i.p[1], i.p[2], sf::Color(86, 125, 70));
         if (count == 12)
         {
             count = 0;
@@ -194,10 +113,6 @@ void Terrain::translate(glMath::vec3f p)
 {
     p.x = (float)(2 * p.x) / constants::SCREEN_WIDTH;
     p.y = (float)(2 * p.y) / constants::SCREEN_HEIGHT;
-    // p.z = (p.y)/720.f;
-    // p1.x = (p1.x+1) * 540;
-    // p1.y = (p1.y-1) * -360;
-    // p.normalize();
 
     model = glMath::translate<float>(model, p);
 }
@@ -238,25 +153,25 @@ void Terrain::updateVertices()
         {
             glMath::vec4f v(j.x, j.y, j.z, 1);
             v = view * model * v;
-            // cout<<"------------VIEWWW--------"<<std::endl;
-            // cout<<v.x<<" "<<v.y<<" "<<v.z<<" "<<v.w<<endl;
-            // cout<<"------------VIEWWW END-------"<<endl;
-            // w will be 1
             triafterView.p[k] = glMath::vec3f(v.x, v.y, v.z);
             k++;
         }
-        
-        glMath::vec3f line2 = triafterView.p[2]-triafterView.p[0];
-        glMath::vec3f line1 = triafterView.p[1]-triafterView.p[0];
-        glMath::vec3f normal =glMath::cross<float>(line2,line1);
-        normal = glMath::normalize(normal);
-        glMath::vec3f camDir = -context.cargs.cameraFront;
-        camDir = glMath::normalize(camDir);
-        if(glMath::dot(normal,camDir)<0){
-            // std::cout<<"gayo"<<std::endl;
-            continue;
-        }
 
+        // ------------------------------
+        // Backface Detection
+        // ------------------------------
+
+        // glMath::vec3f line2 = triafterView.p[2]-triafterView.p[0];
+        // glMath::vec3f line1 = triafterView.p[1]-triafterView.p[0];
+        // glMath::vec3f normal =glMath::cross<float>(line2,line1);
+        // normal = glMath::normalize(normal);
+        // // glMath::vec3f camDir = -context.cargs.cameraFront;
+		// glMath::vec3f camDir = context.cargs.cameraPos + context.cargs.cameraFront;
+        // camDir = glMath::normalize(camDir);
+        // if(glMath::dot(normal,camDir)>0.1){
+        //     // std::cout<<"gayo"<<std::endl;
+        //     continue;
+        // }
 
         int nClippedTriangles = 0;
         glMath::trianglef clipped[2];
@@ -403,15 +318,11 @@ void Terrain::fillTopFlatTriangle(glMath::vec3f v1, glMath::vec3f v2, glMath::ve
     float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
     float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
 
-    // float avgZ = (v1.z+v2.z+v3.z)/3.f;
-
     float curx1 = v3.x;
     float curx2 = v3.x;
 
     for (int scanlineY = v3.y; scanlineY > v1.y; scanlineY--)
     {
-        // BLA((int)curx1, scanlineY, (int)curx2, scanlineY, 1);
-        // scanLine((int)curx1, scanlineY, (int)curx2, scanlineY, avgZ, color);
         scanLine((int)curx1, scanlineY, (int)curx2, scanlineY, color);
         curx1 -= invslope1;
         curx2 -= invslope2;
@@ -424,29 +335,34 @@ void Terrain::scanLine(int x0, int y0, int x1, int y1, sf::Color color)
     int a = 0;
     a = ((x1 - x0) > 0) ? 1 : -1;
     float z;
+    int tempX = x0;
     for (int i = 0; i <= delx; i++)
     {
-        // z = zbuffer.returnZ(x0, y0);
-        // if (zbuffer.TestAndSet(x0, y0, z))
-        // {
-            putpixel(x0, y0, color);
-        // }
-        z = z - (zbuffer.plane.A / zbuffer.plane.C);
+        z = zbuffer.returnZ(x0, y0);
+        if (zbuffer.TestAndSet(x0, y0, z))
+        {
+            if ( x0 == tempX || x0 == x1 )
+            {
+                putpixel(x0, y0, sf::Color::Red);
+            }
+            else 
+            {
+                putpixel(x0, y0, sf::Color::Black);
+            }
+            // putpixel(x0, y0, color);
+        }
+        // z = z - (zbuffer.plane.A / zbuffer.plane.C);
         x0 += a;
     }
 }
 
 void Terrain::fillTriangle(glMath::vec3f vt1, glMath::vec3f vt2, glMath::vec3f vt3, sf::Color color)
 {
-    // zbuffer.makePlaneEquation({1,2,-2},{3,-2,1},{5,1,-4});
     zbuffer.makePlaneEquation(vt1, vt2, vt3);
     std::vector<glMath::vec3f> v;
     v.push_back(vt1);
     v.push_back(vt2);
     v.push_back(vt3);
-
-    /* at first sort the three vertices by y-coordinate ascending so v1 is the topmost vertice */
-    //   sortVerticesAscendingByY();
 
     for (unsigned int i = 0; i < v.size(); i++)
     {
@@ -489,29 +405,16 @@ void Terrain::generateInitialTerrain(int _x, int _z, int _w, int _l)
     consts.create(_x, _z, _w, _l);
     int row = consts.lengthZ / consts.ztrilen;
     int col = consts.widthX / consts.xtrilen;
-    // generates a terrain in xz plane from [-10,10] in both axes
     glMath::trianglef up;
     glMath::trianglef down;
     int x = consts.XTopLeft;
     int z = consts.ZTopLeft;
 
-    // debug
-    // std::cout << "=======" << std::endl;
-    // std::cout << consts.lengthZ << std::endl;
-    // std::cout << consts.ztrilen << std::endl;
-    // std::cout << consts.widthX << std::endl;
-    // std::cout << consts.xtrilen << std::endl;
-    // std::cout << row << std::endl;
-    // std::cout << col << std::endl;
-    // std::cout << "=======" << std::endl;
-    // const siv::PerlinNoise::seed_type seed = 123456u;
-    // const siv::PerlinNoise perlin{seed};
-
     float incX = (float)(2 * consts.xtrilen) / constants::SCREEN_WIDTH;
     float incZ = (float)(2 * consts.ztrilen) / constants::SCREEN_HEIGHT;
 
-    auto val = Random::get(1000,6000);
-    Perlin perlin(4, 1.f, 1.2f, val);
+    int val = Random::get(1000,6000);
+    Perlin perlin(4, 1.f, 1.1f, val);
 
     double perlinNoise[6] = {0.0f};
     for (int i = 0; i < row; i++)
@@ -520,34 +423,8 @@ void Terrain::generateInitialTerrain(int _x, int _z, int _w, int _l)
         for (int j = 0; j < col; j++)
         {
             glMath::vec3f lC;
-            // if (i == 0 and j == 0)
-            // {
             lC = glMath::returnLocalCoords<float>(glMath::vec3f(x, z, 0.0f));
-            // std::cout << "----lc" << std::endl;
-            // std::cout << lC << std::endl;
-            // }
-            // else
-            // {
-            // lC = glMath::returnLocalCoords<float>(glMath::vec3f(x, z, 0.0f), false);
-            // }
             int k;
-            for (k = 0; k < 6; k++)
-            {
-                const double noise = perlin.Get((k * j * 0.01) , ( k * i * 0.01));
-
-                //  noise = perlin.Get(i * 0.3f, j * 0.3f) * 2.f;
-                // float y = 0;
-                perlinNoise[k] = noise;
-            }
-            // up.p[1] = glMath::vec3f(lC.x, perlinNoise[0], lC.y);
-            // up.p[2] = glMath::vec3f(lC.x + incX, perlinNoise[1], lC.y);
-            // up.p[0] = glMath::vec3f(lC.x, perlinNoise[2], lC.y + incZ);
-
-            // // down.p[0] = up.p[0];
-            // down.p[0] = glMath::vec3f(lC.x, perlinNoise[3], lC.y + incZ);
-            // down.p[1] = glMath::vec3f(lC.x + incX, perlinNoise[4], lC.y);
-            // // down.p[2] = glMath::vec3f(lC.x + incX, perlinNoise[5], lC.y + incZ);
-            // down.p[2] = glMath::vec3f(lC.x + incX, perlinNoise[5], lC.y + incZ);
 
             up.p[1] = glMath::vec3f(lC.x, fabs(perlin.Get(lC.x, lC.y)), lC.y);
             up.p[2] = glMath::vec3f(lC.x + incX, fabs(perlin.Get(lC.x + incX, lC.y)), lC.y);
@@ -557,23 +434,12 @@ void Terrain::generateInitialTerrain(int _x, int _z, int _w, int _l)
             down.p[1] = glMath::vec3f(lC.x + incX, fabs(perlin.Get(lC.x + incX, lC.y)), lC.y);
             down.p[2] = glMath::vec3f(lC.x + incX, fabs(perlin.Get(lC.x + incX, lC.y + incZ)), lC.y + incZ);
 
-            // if (i == 0 and j == 0)
-            // {
-            //     std::cout << x << " " << z << std::endl;
-            //     std::cout << up << std::endl;
-            //     std::cout << "now down" << std::endl;
-            //     std::cout << down << std::endl;
-            // }
-
             x += consts.xtrilen;
             local.tris.push_back(up);
             local.tris.push_back(down);
         }
         z += consts.ztrilen;
     }
-    // std::cout << "length of tris: " << local.tris.size() << std::endl;
-    // local.tris.push_back({glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(-0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f)});
-    // local.tris.push_back({glMath::vec3f(-0.5f, 0.5f, 0.5f), glMath::vec3f(0.5f, 0.5f, -0.5f), glMath::vec3f(0.5f, 0.5f, 0.5f)});
 }
 
 int xSize = 20;

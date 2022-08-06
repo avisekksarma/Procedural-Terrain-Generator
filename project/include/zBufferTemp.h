@@ -36,10 +36,35 @@ public:
 	}
 	float& At( int x,int y )
 	{
-		assert( x >= 0 );
-		assert( x < width );
-		assert( y >= 0 );
-		assert( y < height );
+		// assert( x >= 0 );
+		// assert( x < width );
+		// assert( y >= 0 );
+		// assert( y < height );
+		if ( x < 0)
+		{
+			
+			std::cout << "At 1 " << std::endl;
+			std::cout << x << std::endl;
+			x = 0;
+		}
+		if ( x > width)
+		{
+			std::cout << "At 2" << std::endl;
+			std::cout << x << std::endl;
+			x = width;
+		}
+		if (y < 0)
+		{
+			std::cout << "At 3" << std::endl;
+			std::cout << y << std::endl;
+			y = 0;
+		}
+		if (y > height)
+		{
+			std::cout << "At 4" << std::endl;
+			std::cout << y << std::endl;
+			y = height;
+		}
 		return pBuffer[y * width + x];
 	}
 	const float& At( int x,int y ) const
