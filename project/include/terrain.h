@@ -49,6 +49,7 @@ public:
     glMath::mat4f proj;
     ZBuffer zbuffer;
     std::list<glMath::trianglef> listTriangles;
+    std::vector<sf::Color> colorMap;
     // bool first;
 
 public:

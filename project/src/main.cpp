@@ -46,7 +46,7 @@ void handleMouseMovement(mouseArgs &margs, cameraArgs &cargs, sf::RenderWindow &
     direction.y = sin(glMath::degToRadians(margs.pitch));
     direction.z = sin(glMath::degToRadians(margs.yaw)) * cos(glMath::degToRadians(margs.pitch));
 
-    // cargs.cameraFront = glMath::normalize(direction);
+    cargs.cameraFront = glMath::normalize(direction);
     cargs.cameraFront = direction;
 }
 
@@ -127,7 +127,7 @@ int main()
     // Cube cube(window);
     Terrain terrain(window,context);
     // terrain.generateInitialTerrain(constants::SCREEN_WIDTH / 4.0f, constants::SCREEN_HEIGHT / 4.0f, constants::SCREEN_WIDTH / 2.0f, constants::SCREEN_HEIGHT / 2.0f);
-    terrain.generateInitialTerrain(0.1*constants::SCREEN_WIDTH,0.1*constants::SCREEN_HEIGHT,constants::SCREEN_WIDTH,constants::SCREEN_HEIGHT);
+    terrain.generateInitialTerrain(0.0*constants::SCREEN_WIDTH,0.0*constants::SCREEN_HEIGHT,constants::SCREEN_WIDTH,constants::SCREEN_HEIGHT);
     // terrain.generateInitialTerrain(-2.0f*constants::SCREEN_WIDTH,-2.0f*constants::SCREEN_HEIGHT,5*constants::SCREEN_WIDTH,5*constants::SCREEN_HEIGHT);
     mouseArgs margs(true, -90.f, 0.0f, (constants::SCREEN_WIDTH/2.0f), (constants::SCREEN_HEIGHT/2.0f));
     // Cube cube(window,cargs);
@@ -145,8 +145,8 @@ int main()
         // -----------------------------
         // change model matrix here
         // -----------------------------
-        // cube.scale(glMath::vec3f(0.5, 0.5, 0.5));
-        // terrain.translate(glMath::vec3f(0.0f, -200.0, -2.0f));
+        // terrain.scale(glMath::vec3f(1.5, 1.5, 1.5));
+        terrain.translate(glMath::vec3f(0.0f, -200.0, -3.0f));
 
         // cube.scale(glMath::vec3f(0.5, 0.5, 0.5));
         // cube.rotate(glMath::vec3f(0,1,0),angle);

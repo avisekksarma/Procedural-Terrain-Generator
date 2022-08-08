@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <iostream>
 
 #include "../include/perlin.h"
 
@@ -218,7 +219,11 @@ float Perlin::perlin_noise_2D(float vec[2])
 		vec[1] *= 2.0f;
     	amp*=0.5f;
 	}
-
+	// std::cout << result << std::endl;
+	// if (result < 0)
+	// {
+	// 	return 0;
+	// }
 	return result;
 }
 

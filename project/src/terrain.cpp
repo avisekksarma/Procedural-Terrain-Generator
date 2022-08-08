@@ -99,13 +99,14 @@ void Terrain::render()
     for (auto &i : listTriangles)
     {
 
-        // drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255, 0, 0));
+        // drawTriangle(i.p[0], i.p[1], i.p[2], sf::Color(0, 0, 0));
         // fillTriangle(i.p[0], i.p[1], i.p[2], colors[count++]);
-        fillTriangle(i.p[0], i.p[1], i.p[2], sf::Color(86, 125, 70));
-        if (count == 12)
-        {
-            count = 0;
-        }
+        // fillTriangle(i.p[0], i.p[1], i.p[2], sf::Color(255,255,255));
+        fillTriangle(i.p[0], i.p[1], i.p[2], sf::Color(i.red, i.green, i.blue));
+        // if (count == 12)
+        // {
+        //     count = 0;
+        // }
     }
 }
 
@@ -149,6 +150,8 @@ void Terrain::updateVertices()
         glMath::trianglef triafterView;
 
         int k = 0;
+
+
         for (auto j : i.p)
         {
             glMath::vec4f v(j.x, j.y, j.z, 1);
@@ -200,15 +203,20 @@ void Terrain::updateVertices()
                     v.z /= v.w;
                     // v.w = 1;
                 }
-
                 t.p[count++] = glMath::vec3f(v.x, v.y, v.z);
             }
+
+
             t.p[0].x = (int)(((t.p[0].x + 1) * 540) + 0.5);
             t.p[0].y = (int)(((t.p[0].y - 1) * -360) + 0.5);
             t.p[1].x = (int)(((t.p[1].x + 1) * 540) + 0.5);
             t.p[1].y = (int)(((t.p[1].y - 1) * -360) + 0.5);
             t.p[2].x = (int)(((t.p[2].x + 1) * 540) + 0.5);
             t.p[2].y = (int)(((t.p[2].y - 1) * -360) + 0.5);
+
+            t.red = i.red;
+            t.green = i.green;
+            t.blue = i.blue;
             meshTerrain.tris.push_back(t);
         }
     }
@@ -251,7 +259,7 @@ void Terrain::clipAgainstPlanes()
                 switch (p)
                 {
                 case 0:
-                    nTrisToAdd = glMath::triangleNumClippedInPlane({0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, test, clipped[0], clipped[1]);
+                    nTrisToAdd = glMath::triangleNumClippedInPlane({0.0f, 0.0f, 0.0f}, {0.0f, 50.0f, 0.0f}, test, clipped[0], clipped[1]);
                     break;
                 case 1:
                     nTrisToAdd = glMath::triangleNumClippedInPlane({0.0f, (float)(constants::SCREEN_HEIGHT)-1, 0.0f}, {0.0f, -1.0f, 0.0f}, test, clipped[0], clipped[1]);
@@ -268,13 +276,18 @@ void Terrain::clipAgainstPlanes()
                 // add these new ones to the back of the queue for subsequent
                 // clipping against next planes
                 for (int w = 0; w < nTrisToAdd; w++)
+                {
                     tempListTriangles.push_back(clipped[w]);
+                }
             }
             nNewTriangles = tempListTriangles.size();
         }
         countOfTriangles += tempListTriangles.size();
         for (auto &i : tempListTriangles)
         {
+            i.red = triToRaster.red;
+            i.green = triToRaster.green;
+            i.blue = triToRaster.blue;
             listTriangles.push_back(i);
         }
     }
@@ -343,12 +356,20 @@ void Terrain::scanLine(int x0, int y0, int x1, int y1, sf::Color color)
         {
             if ( x0 == tempX || x0 == x1 )
             {
-                putpixel(x0, y0, sf::Color::Red);
+                if (color.r != 255 && color.g != 255 && color.b != 255)
+                {
+                    putpixel(x0, y0, sf::Color::Black);
+                }
+                else
+                {
+                    putpixel(x0, y0, color);
+                }
             }
             else 
             {
-                putpixel(x0, y0, sf::Color::Black);
+                putpixel(x0, y0, color);
             }
+
             // putpixel(x0, y0, color);
         }
         // z = z - (zbuffer.plane.A / zbuffer.plane.C);
@@ -402,6 +423,7 @@ void Terrain::fillTriangle(glMath::vec3f vt1, glMath::vec3f vt2, glMath::vec3f v
 void Terrain::generateInitialTerrain(int _x, int _z, int _w, int _l)
 {
     local.tris.clear();
+    colorMap.clear();
     consts.create(_x, _z, _w, _l);
     int row = consts.lengthZ / consts.ztrilen;
     int col = consts.widthX / consts.xtrilen;
@@ -414,7 +436,7 @@ void Terrain::generateInitialTerrain(int _x, int _z, int _w, int _l)
     float incZ = (float)(2 * consts.ztrilen) / constants::SCREEN_HEIGHT;
 
     int val = Random::get(1000,6000);
-    Perlin perlin(4, 1.f, 1.1f, val);
+    Perlin perlin(4, 1.2f, 1.1f, val);
 
     double perlinNoise[6] = {0.0f};
     for (int i = 0; i < row; i++)
@@ -424,7 +446,6 @@ void Terrain::generateInitialTerrain(int _x, int _z, int _w, int _l)
         {
             glMath::vec3f lC;
             lC = glMath::returnLocalCoords<float>(glMath::vec3f(x, z, 0.0f));
-            int k;
 
             up.p[1] = glMath::vec3f(lC.x, fabs(perlin.Get(lC.x, lC.y)), lC.y);
             up.p[2] = glMath::vec3f(lC.x + incX, fabs(perlin.Get(lC.x + incX, lC.y)), lC.y);
@@ -433,6 +454,63 @@ void Terrain::generateInitialTerrain(int _x, int _z, int _w, int _l)
             down.p[0] = glMath::vec3f(lC.x, fabs(perlin.Get(lC.x, lC.y + incZ)), lC.y + incZ);
             down.p[1] = glMath::vec3f(lC.x + incX, fabs(perlin.Get(lC.x + incX, lC.y)), lC.y);
             down.p[2] = glMath::vec3f(lC.x + incX, fabs(perlin.Get(lC.x + incX, lC.y + incZ)), lC.y + incZ);
+
+            float upAvg = (up.p[0].y + up.p[1].y + up.p[2].y)/3.f;
+            float downAvg = (down.p[0].y + down.p[1].y + down.p[2].y)/3.f;
+
+            if (up.p[1].y >= 0.5 )
+            {
+                // colorMap.push_back(sf::Color::Green);
+                up.red = 255;
+                up.green = 255;
+                up.blue = 255;
+            }
+            else if (up.p[1].y >= 0.25)
+            {
+                up.red = 0;
+                up.green = 140;
+                up.blue = 19;
+            }
+            else if (up.p[1].y >= 0.1)
+            {
+                up.red = 0;
+                up.green = 102;
+                up.blue = 14;
+            }
+            else 
+            {
+                up.red = 15;
+                up.green = 54;
+                up.blue = 123;
+            }
+
+            if (down.p[1].y >= 0.5 )
+            {
+                // colorMap.push_back(sf::Color::Green);
+                down.red = 255;
+                down.green = 255;
+                down.blue = 255;
+            }
+            else if (down.p[1].y >= 0.3)
+            {
+                down.red = 0;
+                down.green = 140;
+                down.blue = 19;
+            }
+            else if (down.p[1].y >= 0.1)
+            {
+                down.red = 0;
+                down.green = 102;
+                down.blue = 14;
+            }
+            else 
+            {
+                down.red = 15;
+                down.green = 54;
+                down.blue = 123;
+            }
+
+
 
             x += consts.xtrilen;
             local.tris.push_back(up);

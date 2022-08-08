@@ -108,6 +108,9 @@ namespace glMath
     {
     public:
         glMath::vec3<T> p[3];
+        int red;
+        int green;
+        int blue;
 
     public:
         friend std::ostream &operator<<(std::ostream &s, const triangle<T> &v)
