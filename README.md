@@ -28,9 +28,9 @@ cd project/src
 
 The wireframe result :<br>
 
-![image](./img1.png)
+![image](./images/img1.png)
 
 Clipping result:<br>
 
-![image](./img2.png)
+![image](./images/img2.png)
 
